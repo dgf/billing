@@ -8,6 +8,14 @@ run the service
 
     mvn spring-boot:run
 
+update JPA entities
+
+    mvn hibernate-tools:hbm2java
+
+update JAX-RS layer
+
+    mvn swagger-codegen:generate
+
 ## crudl invoices
 
 create one

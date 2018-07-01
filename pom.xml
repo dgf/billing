@@ -73,21 +73,21 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
                 <version>2.3.1</version>
+                <configuration>
+                    <apiPackage>org.aplatanao.billing.rest.paths</apiPackage>
+                    <modelPackage>org.aplatanao.billing.rest.definitions</modelPackage>
+                    <generateSupportingFiles>false</generateSupportingFiles>
+                    <language>jaxrs-spec</language>
+                    <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
+                    <configOptions>
+                        <interfaceOnly>true</interfaceOnly>
+                    </configOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
                         </goals>
-                        <configuration>
-                            <apiPackage>org.aplatanao.billing.rest.paths</apiPackage>
-                            <modelPackage>org.aplatanao.billing.rest.definitions</modelPackage>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <language>jaxrs-spec</language>
-                            <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
-                            <configOptions>
-                                <interfaceOnly>true</interfaceOnly>
-                            </configOptions>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -115,7 +115,8 @@
                 <configuration>
                     <ejb3>true</ejb3>
                     <packageName>org.aplatanao.billing.entities</packageName>
-                    <propertyFile>${project.basedir}/src/main/resources/db/generation/hibernate.properties</propertyFile>
+                    <propertyFile>${project.basedir}/src/main/resources/db/generation/hibernate.properties
+                    </propertyFile>
                     <revengFile>${project.basedir}/src/main/resources/db/generation/reveng.xml</revengFile>
                     <templatePath>${project.basedir}/src/main/resources/db/templates</templatePath>
                     <outputDirectory>${project.build.directory}/generated-sources/hibernate</outputDirectory>
@@ -151,6 +152,12 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>3.0.0</version>
+                <configuration>
+                    <sources>
+                        <source>${project.build.directory}/generated-sources/swagger/src/gen/java</source>
+                        <source>${project.build.directory}/generated-sources/hibernate</source>
+                    </sources>
+                </configuration>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -158,12 +165,6 @@
                         <goals>
                             <goal>add-source</goal>
                         </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/swagger/src/gen/java</source>
-                                <source>${project.build.directory}/generated-sources/hibernate</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
