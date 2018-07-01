@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC
+        "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+<hibernate-reverse-engineering>
+    <type-mapping>
+        <sql-type jdbc-type="INTEGER" hibernate-type="java.lang.Long"/>
+        <sql-type jdbc-type="DATE" hibernate-type="org.joda.time.LocalDate"/>
+    </type-mapping>
+    <table-filter match-schema="public" match-name="flyway_schema_history" exclude="true" />
+</hibernate-reverse-engineering>
