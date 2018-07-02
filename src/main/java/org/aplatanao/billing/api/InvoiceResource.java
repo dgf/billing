@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 @Service
 public class InvoiceResource implements InvoicesApi, InvoiceApi {
@@ -48,7 +51,11 @@ public class InvoiceResource implements InvoicesApi, InvoiceApi {
 
     @Override
     public Invoice getInvoiceById(Long id) throws Exception {
-        return null;
+        org.aplatanao.billing.entities.Invoice invoice = invoices.getById(id);
+        if (invoice == null) {
+            throw new NotFoundException();
+        }
+        return InvoiceResource.GET(invoice);
     }
 
     @Override

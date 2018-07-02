@@ -18,7 +18,7 @@ update JAX-RS layer
 
 ## crudl invoices
 
-create one
+create invoice
 
     curl --dump-header - \
          --request POST \
@@ -41,3 +41,14 @@ list invoices
     Content-Length: 72
     Date: Sun, 01 Jul 2018 18:58:24 GMT
     [{"id":1,"date":"2018-07-01","code":"OFF_2018_07","comment":"kick off"}]%
+
+get invoice
+
+    curl --dump-header - http://localhost:8080/invoices/1
+
+    HTTP/1.1 200
+    Content-Type: application/json
+    Content-Length: 70
+    Date: Sun, 01 Jul 2018 19:47:13 GMT
+    {"id":1,"date":"2018-07-01","code":"OFF_2018_07","comment":"kick off"}%
+
