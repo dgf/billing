@@ -8,7 +8,7 @@ info:
     name: MIT License
 
 host: localhost:8080
-basePath: /api
+basePath: /
 schemes:
   - http
 
@@ -147,7 +147,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
 
-  /payment/{id}:
+  /payments/{id}:
     description: Payment
 
     get:

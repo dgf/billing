@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication//(exclude = {ErrorMvcAutoConfiguration.class})
+@SpringBootApplication
 @EnableJpaRepositories
 public class BillingApplication {
 

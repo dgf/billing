@@ -1,4 +1,4 @@
-package org.aplatanao.billing;
+package org.aplatanao.billing.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -13,18 +13,9 @@ public class JacksonConfig {
 
     @Autowired
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-        System.out.println("CONFIGURE Jackson");
-
-        ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-
-        // Some other custom configuration for supporting Java 8 features
-        objectMapper.registerModule(new Jdk8Module());
-        objectMapper.registerModule(new JavaTimeModule());
-
-        // Use property
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-
-        return objectMapper;
+        return builder.createXmlMapper(false).build()
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     }
 }
-
