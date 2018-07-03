@@ -7,5 +7,10 @@
         <sql-type jdbc-type="INTEGER" hibernate-type="java.lang.Long"/>
         <sql-type jdbc-type="DATE" hibernate-type="org.joda.time.LocalDate"/>
     </type-mapping>
-    <table-filter match-schema="public" match-name="flyway_schema_history" exclude="true" />
+    <table-filter match-schema="public" match-name="flyway_schema_history" exclude="true"/>
+    <table-filter match-schema="public" match-name=".*">
+        <meta attribute="class-description">
+            Aplatanao Billing Persistence Class
+        </meta>
+    </table-filter>
 </hibernate-reverse-engineering>

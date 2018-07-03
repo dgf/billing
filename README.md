@@ -1,5 +1,22 @@
 # Aplatanao Billing Service
 
+## requirements
+
+run a local PostgreSQL server
+
+    docker run --rm --name billing-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=billing postgres:9
+
+adapt connection properties, see `pom.xml`
+
+    <properties>
+        ...
+        <postgres.url>jdbc:postgresql://192.168.99.100:5432/billing</postgres.url>
+        <postgres.username>postgres</postgres.username>
+        ...
+    </properties>
+
+## development flow
+
 migrate the storage
 
     mvn flyway:migrate

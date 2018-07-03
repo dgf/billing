@@ -22,6 +22,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+
+        <postgres.url>jdbc:postgresql://192.168.99.100:5432/billing</postgres.url>
+        <postgres.username>postgres</postgres.username>
+        <postgres.password>postgres</postgres.password>
+        <postgres.driver>org.postgresql.Driver</postgres.driver>
+        <postgres.dialect>org.hibernate.dialect.PostgreSQL94Dialect</postgres.dialect>
     </properties>
 
     <dependencies>
@@ -64,10 +70,35 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <delimiters>
+                        <delimiter>@</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>io.swagger</groupId>
@@ -96,9 +127,9 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.1.3</version>
                 <configuration>
-                    <url>jdbc:postgresql://localhost:5432/billing</url>
-                    <user>postgres</user>
-                    <password>postgres</password>
+                    <url>${postgres.url}</url>
+                    <user>${postgres.username}</user>
+                    <password>${postgres.password}</password>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -115,10 +146,9 @@
                 <configuration>
                     <ejb3>true</ejb3>
                     <packageName>org.aplatanao.billing.entities</packageName>
-                    <propertyFile>${project.basedir}/src/main/resources/db/generation/hibernate.properties
-                    </propertyFile>
                     <revengFile>${project.basedir}/src/main/resources/db/generation/reveng.xml</revengFile>
                     <templatePath>${project.basedir}/src/main/resources/db/templates</templatePath>
+                    <propertyFile>${project.build.directory}/classes/db/generation/hibernate.properties</propertyFile>
                     <outputDirectory>${project.build.directory}/generated-sources/hibernate</outputDirectory>
                 </configuration>
                 <dependencies>
@@ -152,12 +182,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>3.0.0</version>
-                <configuration>
-                    <sources>
-                        <source>${project.build.directory}/generated-sources/swagger/src/gen/java</source>
-                        <source>${project.build.directory}/generated-sources/hibernate</source>
-                    </sources>
-                </configuration>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -165,6 +189,12 @@
                         <goals>
                             <goal>add-source</goal>
                         </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/swagger/src/gen/java</source>
+                                <source>${project.build.directory}/generated-sources/hibernate</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
