@@ -1,6 +1,6 @@
 package org.aplatanao.billing.provide;
 
-import org.aplatanao.billing.rest.definitions.Validation;
+import org.aplatanao.billing.rest.model.Validation;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;

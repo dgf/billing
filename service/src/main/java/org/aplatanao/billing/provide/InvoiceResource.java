@@ -1,9 +1,10 @@
 package org.aplatanao.billing.provide;
 
-import org.aplatanao.billing.persist.InvoiceRepository;
-import org.aplatanao.billing.rest.definitions.Invoice;
-import org.aplatanao.billing.rest.definitions.Invoices;
-import org.aplatanao.billing.rest.paths.InvoicesApi;
+import org.aplatanao.billing.persist.InvoiceTableRepository;
+import org.aplatanao.billing.persistence.InvoiceTable;
+import org.aplatanao.billing.rest.api.InvoicesApi;
+import org.aplatanao.billing.rest.model.Invoice;
+import org.aplatanao.billing.rest.model.Invoices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,22 +18,22 @@ import javax.ws.rs.NotFoundException;
 @Service
 public class InvoiceResource implements InvoicesApi {
 
-    private InvoiceRepository invoices;
+    private InvoiceTableRepository invoices;
 
     @Autowired
-    public InvoiceResource(InvoiceRepository invoices) {
+    public InvoiceResource(InvoiceTableRepository invoices) {
         this.invoices = invoices;
     }
 
-    private static org.aplatanao.billing.entities.Invoice POST(Invoice i) {
-        org.aplatanao.billing.entities.Invoice invoice = new org.aplatanao.billing.entities.Invoice();
+    private static InvoiceTable POST(Invoice i) {
+        InvoiceTable invoice = new InvoiceTable();
         invoice.setCode(i.getCode());
         invoice.setComment(i.getComment());
         invoice.setDate(i.getDate());
         return invoice;
     }
 
-    private static Invoice GET(org.aplatanao.billing.entities.Invoice i) {
+    private static Invoice GET(InvoiceTable i) {
         return new Invoice()
                 .id(i.getId())
                 .date(i.getDate())
@@ -40,7 +41,7 @@ public class InvoiceResource implements InvoicesApi {
                 .comment(i.getComment());
     }
 
-    private static Invoices LIST(Page<org.aplatanao.billing.entities.Invoice> p) {
+    private static Invoices LIST(Page<InvoiceTable> p) {
         Invoices i = new Invoices();
         i.addAll(p.map(InvoiceResource::GET).getContent());
         return i;
@@ -48,7 +49,7 @@ public class InvoiceResource implements InvoicesApi {
 
     @Override
     public Invoice getInvoiceById(Long id) {
-        org.aplatanao.billing.entities.Invoice invoice = invoices.getById(id);
+        InvoiceTable invoice = invoices.getById(id);
         if (invoice == null) {
             throw new NotFoundException("Invoice " + id + " not found.");
         }

@@ -18,7 +18,7 @@
 
     <properties>
         <!-- Generation + Development Runtime -->
-        <postgres.url>jdbc:postgresql://192.168.99.100:5432/billing</postgres.url>
+        <postgres.url>jdbc:postgresql://localhost:5432/billing</postgres.url>
         <postgres.username>postgres</postgres.username>
         <postgres.password>postgres</postgres.password>
         <postgres.driver>org.postgresql.Driver</postgres.driver>
@@ -131,21 +131,21 @@
             <plugin>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-tools-maven-plugin</artifactId>
-                <version>5.3.0.Final</version>
+                <version>5.3.2-SNAPSHOT</version>
                 <configuration>
                     <ejb3>true</ejb3>
-                    <packageName>org.aplatanao.billing.entities</packageName>
-                    <revengFile>${project.basedir}/src/main/resources/db/generation/reveng.xml</revengFile>
-                    <revengStrategy>org.aplatanao.billing.reverse.ReverseEngineeringStrategy</revengStrategy>
-                    <templatePath>${project.basedir}/src/main/resources/db/templates</templatePath>
-                    <propertyFile>${project.build.directory}/classes/db/generation/hibernate.properties</propertyFile>
+                    <packageName>org.aplatanao.billing.persistence</packageName>
+                    <revengStrategy>org.aplatanao.billing.hibernate.ReverseEngineeringStrategy</revengStrategy>
+                    <templatePath>${project.basedir}/src/main/resources/db/hibernate</templatePath>
+                    <revengFile>${project.basedir}/src/main/resources/db/hibernate/reveng.xml</revengFile>
+                    <propertyFile>${project.build.directory}/classes/db/hibernate/reveng.properties</propertyFile>
                     <outputDirectory>${project.build.directory}/generated-sources/hibernate</outputDirectory>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.hibernate</groupId>
                         <artifactId>hibernate-entitymanager</artifactId>
-                        <version>5.3.0.Final</version>
+                        <version>5.3.1.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>cglib</groupId>

@@ -9,6 +9,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -42,8 +49,8 @@
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
                 <version>2.3.1</version>
                 <configuration>
-                    <apiPackage>org.aplatanao.billing.rest.paths</apiPackage>
-                    <modelPackage>org.aplatanao.billing.rest.definitions</modelPackage>
+                    <apiPackage>org.aplatanao.billing.rest.api</apiPackage>
+                    <modelPackage>org.aplatanao.billing.rest.model</modelPackage>
                     <generateSupportingFiles>false</generateSupportingFiles>
                     <language>jaxrs-spec</language>
                     <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
@@ -65,8 +72,6 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>

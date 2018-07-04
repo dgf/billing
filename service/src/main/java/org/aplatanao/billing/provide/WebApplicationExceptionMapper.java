@@ -1,6 +1,6 @@
 package org.aplatanao.billing.provide;
 
-import org.aplatanao.billing.rest.definitions.Error;
+import org.aplatanao.billing.rest.model.Error;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
