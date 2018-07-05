@@ -7,10 +7,24 @@ public class ReverseEngineeringStrategy extends DefaultReverseEngineeringStrateg
 
     @Override
     public String tableToClassName(TableIdentifier tableIdentifier) {
-        System.out.println("tableToClassName");
-        System.out.println("catalog " + tableIdentifier.getCatalog());
-        System.out.println("name " + tableIdentifier.getName());
-        System.out.println("schema " + tableIdentifier.getSchema());
-        return super.tableToClassName(tableIdentifier) + "Table";
+        String name = tableIdentifier.getName();
+        if (name.length() > 2) {
+            String suffix = "";
+            switch (name.substring(0, 2)) {
+                case "t_":
+                    suffix = "Table";
+                    break;
+                case "v_":
+                    suffix = "View";
+                    break;
+                case "r_":
+                    suffix = "Resource";
+                    break;
+            }
+            if (suffix.length() > 0) {
+                name = name.substring(2) + suffix;
+            }
+        }
+        return super.tableToClassName(new TableIdentifier(name));
     }
 }

@@ -10,6 +10,7 @@
 
     <!-- ignore meta data -->
     <table-filter match-schema="public" match-name="flyway_schema_history" exclude="true"/>
+    <table-filter match-schema="public" match-name="v_.*" exclude="true"/>
 
     <table-filter match-schema="public" match-name=".*">
         <meta attribute="class-description">

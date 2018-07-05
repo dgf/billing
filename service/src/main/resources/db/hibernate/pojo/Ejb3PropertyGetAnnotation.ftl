@@ -3,7 +3,9 @@
 <#if property.equals(clazz.identifierProperty)>
  ${pojo.generateAnnIdGenerator()}
 <#-- configure strategy -->
+<#if !pojo.isComponent(clazz.identifierProperty) >
 @${pojo.importType("javax.persistence.GeneratedValue")}(strategy = ${pojo.importType("javax.persistence.GenerationType")}.IDENTITY)
+</#if>
 <#-- /configure strategy -->
 <#-- if this is the id property (getter)-->
 <#-- explicitly set the column name for this property-->

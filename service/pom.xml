@@ -18,7 +18,7 @@
 
     <properties>
         <!-- Generation + Development Runtime -->
-        <postgres.url>jdbc:postgresql://localhost:5432/billing</postgres.url>
+        <postgres.url>jdbc:postgresql://192.168.99.100:5432/billing</postgres.url>
         <postgres.username>postgres</postgres.username>
         <postgres.password>postgres</postgres.password>
         <postgres.driver>org.postgresql.Driver</postgres.driver>
