@@ -1,4 +1,4 @@
-package org.aplatanao.billing.config;
+package org.aplatanao.billing.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;

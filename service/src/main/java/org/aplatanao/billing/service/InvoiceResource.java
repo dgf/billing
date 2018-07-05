@@ -1,8 +1,8 @@
-package org.aplatanao.billing.provide;
+package org.aplatanao.billing.service;
 
-import org.aplatanao.billing.persist.InvoiceTableRepository;
-import org.aplatanao.billing.persist.InvoicesPerMonthTableRepository;
+import org.aplatanao.billing.persistence.InvoiceRepository;
 import org.aplatanao.billing.persistence.InvoiceTable;
+import org.aplatanao.billing.persistence.InvoicesPerMonthRepository;
 import org.aplatanao.billing.persistence.InvoicesPerMonthResource;
 import org.aplatanao.billing.rest.api.InvoicesApi;
 import org.aplatanao.billing.rest.model.Invoice;
@@ -24,12 +24,12 @@ import java.util.List;
 @Service
 public class InvoiceResource implements InvoicesApi {
 
-    private InvoiceTableRepository invoices;
+    private InvoiceRepository invoices;
 
-    private InvoicesPerMonthTableRepository perMonth;
+    private InvoicesPerMonthRepository perMonth;
 
     @Autowired
-    public InvoiceResource(InvoiceTableRepository invoices, InvoicesPerMonthTableRepository perMonth) {
+    public InvoiceResource(InvoiceRepository invoices, InvoicesPerMonthRepository perMonth) {
         this.invoices = invoices;
         this.perMonth = perMonth;
     }

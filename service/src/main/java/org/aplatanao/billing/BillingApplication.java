@@ -13,6 +13,7 @@ public class BillingApplication {
     public static void main(String[] args) {
         SpringApplication.run(BillingApplication.class, args);
     }
+
     @Bean
     public CommonsRequestLoggingFilter requestLoggingFilter() {
         CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();

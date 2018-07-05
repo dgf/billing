@@ -1,4 +1,4 @@
-package org.aplatanao.billing.provide;
+package org.aplatanao.billing.provider;
 
 import org.aplatanao.billing.rest.model.Validation;
 

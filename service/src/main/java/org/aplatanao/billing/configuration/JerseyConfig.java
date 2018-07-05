@@ -1,8 +1,8 @@
-package org.aplatanao.billing.config;
+package org.aplatanao.billing.configuration;
 
-import org.aplatanao.billing.provide.ConstraintViolationExceptionMapper;
-import org.aplatanao.billing.provide.InvoiceResource;
-import org.aplatanao.billing.provide.WebApplicationExceptionMapper;
+import org.aplatanao.billing.provider.ConstraintViolationExceptionMapper;
+import org.aplatanao.billing.provider.WebApplicationExceptionMapper;
+import org.aplatanao.billing.service.InvoiceResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
