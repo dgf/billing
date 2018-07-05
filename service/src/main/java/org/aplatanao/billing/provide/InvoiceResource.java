@@ -1,7 +1,9 @@
 package org.aplatanao.billing.provide;
 
 import org.aplatanao.billing.persist.InvoiceTableRepository;
+import org.aplatanao.billing.persist.InvoicesPerMonthTableRepository;
 import org.aplatanao.billing.persistence.InvoiceTable;
+import org.aplatanao.billing.persistence.InvoicesPerMonthTable;
 import org.aplatanao.billing.rest.api.InvoicesApi;
 import org.aplatanao.billing.rest.model.Invoice;
 import org.aplatanao.billing.rest.model.Invoices;
@@ -13,16 +15,20 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
+import javax.ws.rs.*;
+import java.util.List;
 
 @Service
 public class InvoiceResource implements InvoicesApi {
 
     private InvoiceTableRepository invoices;
 
+    private InvoicesPerMonthTableRepository perMonth;
+
     @Autowired
-    public InvoiceResource(InvoiceTableRepository invoices) {
+    public InvoiceResource(InvoiceTableRepository invoices, InvoicesPerMonthTableRepository perMonth) {
         this.invoices = invoices;
+        this.perMonth = perMonth;
     }
 
     private static InvoiceTable POST(Invoice i) {
@@ -66,4 +72,10 @@ public class InvoiceResource implements InvoicesApi {
         return LIST(invoices.findAll(PageRequest.of(page, size)));
     }
 
+    @GET
+    @Path("/by-month")
+    @Produces({ "application/json" })
+    public List<InvoicesPerMonthTable> getByMonth() {
+        return perMonth.findByYear(2018L);
+    }
 }
