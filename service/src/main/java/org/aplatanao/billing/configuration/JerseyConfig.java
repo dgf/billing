@@ -1,7 +1,6 @@
 package org.aplatanao.billing.configuration;
 
-import org.aplatanao.billing.provider.ConstraintViolationExceptionMapper;
-import org.aplatanao.billing.provider.WebApplicationExceptionMapper;
+import org.aplatanao.billing.provider.*;
 import org.aplatanao.billing.service.InvoiceResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +16,13 @@ public class JerseyConfig extends ResourceConfig {
     }
 
     private void registerComponents() {
+        register(AcceptLanguageRequestFilter.class);
+        register(ValidationConfigurationContextResolver.class);
+
         register(WebApplicationExceptionMapper.class);
+        register(JsonMappingExceptionMapper.class, 1);
         register(ConstraintViolationExceptionMapper.class);
+
         register(InvoiceResource.class);
     }
 }

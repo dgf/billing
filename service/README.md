@@ -4,7 +4,7 @@
 
 run a local PostgreSQL server
 
-    docker run --rm --name billing-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=billing postgres:9
+    docker run --rm --name billing-postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=billing postgres:9
 
 adapt connection properties, see `pom.xml`
 
