@@ -1,4 +1,4 @@
-package org.aplatanao.billing.provider;
+package org.aplatanao.billing.provider.exception;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 

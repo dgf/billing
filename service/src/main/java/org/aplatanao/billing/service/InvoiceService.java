@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class InvoiceResource implements InvoicesApi {
+public class InvoiceService implements InvoicesApi {
 
     private InvoiceRepository invoices;
 
     @Autowired
-    public InvoiceResource(InvoiceRepository invoices) {
+    public InvoiceService(InvoiceRepository invoices) {
         this.invoices = invoices;
     }
 
@@ -76,7 +76,7 @@ public class InvoiceResource implements InvoicesApi {
 
     private static Invoices LIST(Page<InvoiceTable> p) {
         Invoices i = new Invoices();
-        i.addAll(p.map(InvoiceResource::GET).getContent());
+        i.addAll(p.map(InvoiceService::GET).getContent());
         return i;
     }
 

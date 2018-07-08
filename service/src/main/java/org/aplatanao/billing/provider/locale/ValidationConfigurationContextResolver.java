@@ -1,5 +1,4 @@
-package org.aplatanao.billing.provider;
-
+package org.aplatanao.billing.provider.locale;
 
 import org.glassfish.jersey.server.validation.ValidationConfig;
 

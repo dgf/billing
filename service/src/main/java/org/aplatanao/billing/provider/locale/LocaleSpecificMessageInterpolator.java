@@ -1,4 +1,4 @@
-package org.aplatanao.billing.provider;
+package org.aplatanao.billing.provider.locale;
 
 import javax.validation.MessageInterpolator;
 import java.util.Locale;

@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class ReportsResource implements ReportsApi {
+public class ReportsService implements ReportsApi {
 
     private InvoicesPerMonthRepository perMonth;
 
     @Autowired
-    public ReportsResource(InvoicesPerMonthRepository perMonth) {
+    public ReportsService(InvoicesPerMonthRepository perMonth) {
         this.perMonth = perMonth;
     }
 
