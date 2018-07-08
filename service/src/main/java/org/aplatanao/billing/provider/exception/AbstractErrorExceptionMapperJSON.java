@@ -16,7 +16,8 @@ public abstract class AbstractErrorExceptionMapperJSON<E extends Throwable> impl
                 .status(getStatus(exception))
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .entity(new Error()
-                        .status(getStatus(exception).getStatusCode())
+                        .code(getStatus(exception).getStatusCode())
+                        .status(getStatus(exception).getReasonPhrase())
                         .message(exception.getMessage()))
                 .build();
     }

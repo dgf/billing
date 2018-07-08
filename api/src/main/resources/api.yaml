@@ -1,47 +1,38 @@
-swagger: 2.0
-
+swagger: '2.0'
 info:
   title: Aplatanao Billing Service
   description: API of the Aplatanao Billing Service.
   version: 1.0.0
   license:
     name: MIT License
-
-host: localhost:8080
-basePath: /api
 schemes:
   - http
   - https
-
+host: 'localhost:8080'
+basePath: /api
+produces:
+  - application/json
 paths:
-
   /invoices:
-    description: Invoices resource.
-
     get:
+      summary: Paged invoice list.
       operationId: getInvoices
-      summary: Return a paged invoice list.
-      produces:
-      - application/json
       parameters:
-      - $ref: '#/parameters/Page'
-      - $ref: '#/parameters/Size'
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/Size'
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/Invoices'
-        500:
+        '500':
           description: Error
           schema:
             $ref: '#/definitions/Error'
-
     post:
-      operationId: addInvoice
       summary: Add a new invoice.
+      operationId: addInvoice
       consumes:
-        - application/json
-      produces:
         - application/json
       parameters:
         - in: body
@@ -50,142 +41,144 @@ paths:
           schema:
             $ref: '#/definitions/Invoice'
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/Invoice'
-        400:
+        '400':
           description: Bad Request
           schema:
             $ref: '#/definitions/Validation'
-        500:
+        '500':
           description: Error
           schema:
             $ref: '#/definitions/Error'
-
-  /invoices/{code}:
-
+  '/invoices/{code}':
+    parameters:
+      - $ref: '#/parameters/Code'
     get:
-      operationId: getInvoiceByCode
       summary: Get an invoice by code.
-      produces:
-      - application/json
-      parameters:
-      - name: code
-        in: path
-        description: Code of the invoice to return.
-        required: true
-        type: string
+      operationId: getInvoiceByCode
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/Invoice'
-        404:
+        '404':
           description: Not Found
           schema:
             $ref: '#/definitions/Error'
-        500:
+        '500':
           description: Error
           schema:
             $ref: '#/definitions/Error'
 
-  /reports:
-    description: Reports resource.
-
-  /reports/invoices/{year}:
+  '/reports/invoices/{year}':
+    parameters:
+      - $ref: '#/parameters/Year'
     get:
-      operationId: getInvoicesPerMonth
       summary: Get invoices report.
-      produces:
-      - application/json
-      parameters:
-      - name: year
-        in: path
-        description: Year of invoices to be analyzed.
-        required: true
-        type: integer
+      operationId: getInvoicesPerMonth
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/InvoicesPerMonth'
-        500:
+        '500':
           description: Error
           schema:
             $ref: '#/definitions/Error'
-
 parameters:
-
+  Code:
+    description: Code of the resource to be returned.
+    required: true
+    in: path
+    name: code
+    type: string
+    minLength: 3
+    maxLength: 20
   Page:
-    name: page
     description: The page to be returned.
     in: query
+    name: page
     required: true
     type: integer
     format: int32
     default: 0
     minimum: 0
-
   Size:
-    name: size
     description: Number of records to be returned.
-    in: query
     required: true
+    in: query
+    name: size
     type: integer
     format: int32
     default: 20
-
+    minimum: 5
+  Year:
+    description: Year of resources to be returned.
+    required: true
+    in: path
+    name: year
+    type: integer
+    format: int32
+    minimum: 1978
+    maximum: 32767
 definitions:
-
   Error:
-    description: Generic uncaught error.
+    description: Generic API error.
     type: object
+    required:
+      - code
+      - status
+      - message
     properties:
-      status:
+      code:
         description: HTTP status code.
         type: integer
         format: int32
-      message:
+        minimum: 100
+        maximum: 599
+      status:
+        description: HTTP status reason phrase.
         type: string
-
+      message:
+        description: Error message.
+        type: string
   Validation:
     description: Input validation error with detailed explainations.
-    type: object
-    properties:
-      status:
-        description: HTTP status code.
-        type: integer
-        format: int32
-      messages:
-        description: Validation hints mapped by input hierarchy.
-        type: object
-        additionalProperties:
-          type: string
-
+    allOf:
+      - $ref: '#/definitions/Error'
+      - type: object
+        properties:
+          messages:
+            description: Validation hints mapped by input hierarchy.
+            type: object
+            additionalProperties:
+              type: string
   InvoicePosition:
+    description: Invoice position.
     type: object
     required:
-    - number
-    - amount
-    - description
+      - description
+      - cents
     properties:
-      number:
-        type: integer
-        format: int32
-      amount:
-        type: number
       description:
         type: string
-
+      cents:
+        type: integer
+        format: int64
   Invoice:
+    description: Invoice.
     type: object
     required:
-    - code
-    - date
+      - code
+      - date
     properties:
       code:
         type: string
+        minLength: 3
+        maxLength: 20
       date:
         type: string
         format: date
@@ -195,27 +188,36 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/InvoicePosition'
-
   Invoices:
+    description: Invoice list.
     type: array
     items:
       $ref: '#/definitions/Invoice'
-
   InvoicesPerMonth:
+    description: Invoice per month report of a year FOO.
     type: array
     items:
       type: object
       required:
-      - year
-      - month
-      - count
-      - amount
+        - year
+        - month
+        - count
+        - cents
       properties:
         year:
           type: integer
+          format: int32
+          minimum: 1978
+          maximum: 32767
         month:
           type: integer
+          format: int32
+          minimum: 1
+          maximum: 12
         count:
           type: integer
-        amount:
-          type: number
+          format: int64
+          minimum: 0
+        cents:
+          type: integer
+          format: int64

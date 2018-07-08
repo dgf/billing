@@ -6,13 +6,12 @@ import org.aplatanao.billing.rest.model.InvoicesPerMonth;
 import org.aplatanao.billing.rest.model.InvoicesPerMonthInner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class ReportsService implements ReportsApi {
 
     private InvoicesPerMonthRepository perMonth;
@@ -23,17 +22,18 @@ public class ReportsService implements ReportsApi {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public InvoicesPerMonth getInvoicesPerMonth(Integer year) {
         InvoicesPerMonth invoices = new InvoicesPerMonth();
         invoices.addAll(perMonth.findByYear(year.shortValue())
                 .stream()
                 .map(m -> new InvoicesPerMonthInner()
-                        .year(Math.toIntExact(m.getId().getYear()))
-                        .month(Math.toIntExact(m.getId().getMonth()))
-                        .count(Math.toIntExact(m.getCount()))
-                        .amount(BigDecimal.valueOf(m.getCents())
-                                .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP))
+                        .year((int) m.getId().getYear())
+                        .month((int) m.getId().getMonth())
+                        .count(m.getCount())
+                        .cents(m.getCents())
                 )
+                .sorted(Comparator.comparingInt(InvoicesPerMonthInner::getMonth))
                 .collect(Collectors.toList()));
         return invoices;
     }

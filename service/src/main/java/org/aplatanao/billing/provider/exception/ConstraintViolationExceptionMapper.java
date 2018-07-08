@@ -15,10 +15,13 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 
     @Override
     public Response toResponse(final ConstraintViolationException exception) {
-        return Response.status(Response.Status.BAD_REQUEST)
+        Response.Status status = Response.Status.BAD_REQUEST;
+        return Response.status(status)
                 .type(MediaType.APPLICATION_JSON)
                 .entity(new Validation()
-                        .status(Response.Status.BAD_REQUEST.getStatusCode())
+                        .code(status.getStatusCode())
+                        .status(status.getReasonPhrase())
+                        .message("Constraint violation.")
                         .messages(exception.getConstraintViolations().stream()
                                 .collect(Collectors.toMap(
                                         violation -> violation.getPropertyPath().toString(),

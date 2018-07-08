@@ -1,6 +1,9 @@
 package org.aplatanao.billing.service;
 
-import org.aplatanao.billing.persistence.*;
+import org.aplatanao.billing.persistence.InvoicePositionTable;
+import org.aplatanao.billing.persistence.InvoicePositionTableId;
+import org.aplatanao.billing.persistence.InvoiceRepository;
+import org.aplatanao.billing.persistence.InvoiceTable;
 import org.aplatanao.billing.rest.api.InvoicesApi;
 import org.aplatanao.billing.rest.model.Invoice;
 import org.aplatanao.billing.rest.model.InvoicePosition;
@@ -9,20 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
-import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
-@Transactional
 public class InvoiceService implements InvoicesApi {
 
     private InvoiceRepository invoices;
@@ -33,16 +33,17 @@ public class InvoiceService implements InvoicesApi {
     }
 
     private static Set<InvoicePositionTable> POST(InvoiceTable invoice, List<InvoicePosition> positions) {
-        return positions.stream()
-                .map(p -> {
+        return IntStream.range(0, positions.size())
+                .mapToObj(i -> {
+                    InvoicePosition p = positions.get(i);
                     InvoicePositionTableId id = new InvoicePositionTableId();
                     id.setInvoiceCode(invoice.getCode());
-                    id.setNumber(p.getNumber().shortValue());
+                    id.setNumber((short) i);
 
                     InvoicePositionTable table = new InvoicePositionTable();
                     table.setId(id);
                     table.setInvoiceTable(invoice);
-                    table.setCents(p.getAmount().multiply(BigDecimal.valueOf(100L)).longValueExact());
+                    table.setCents(p.getCents());
                     table.setDescription(p.getDescription());
                     return table;
                 })
@@ -59,20 +60,19 @@ public class InvoiceService implements InvoicesApi {
     }
 
     private static Invoice GET(InvoiceTable i) {
-        //throw new ArithmeticException("integer overflow");
         return new Invoice()
                 .code(i.getCode())
                 .date(i.getDate())
                 .comment(i.getComment())
                 .positions(i.getInvoicePositionTables()
                         .stream()
+                        .sorted(Comparator.comparingInt(p -> p.getId().getNumber()))
                         .map(p -> new InvoicePosition()
-                                .number(Math.toIntExact(p.getId().getNumber()))
-                                .amount(BigDecimal.valueOf(p.getCents())
-                                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP))
+                                .cents(p.getCents())
                                 .description(p.getDescription()))
                         .collect(Collectors.toList()));
     }
+
 
     private static Invoices LIST(Page<InvoiceTable> p) {
         Invoices i = new Invoices();
@@ -81,6 +81,13 @@ public class InvoiceService implements InvoicesApi {
     }
 
     @Override
+    @Transactional
+    public Invoice addInvoice(Invoice body) {
+        return GET(invoices.save(POST(body)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Invoice getInvoiceByCode(String code) {
         Optional<InvoiceTable> optional = invoices.findById(code);
         if (optional.isPresent()) {
@@ -90,12 +97,8 @@ public class InvoiceService implements InvoicesApi {
     }
 
     @Override
-    public Invoice addInvoice(@Valid Invoice body) {
-        return GET(invoices.save(POST(body)));
-    }
-
-    @Override
-    public Invoices getInvoices(@NotNull @Min(0) Integer page, @NotNull Integer size) {
-        return LIST(invoices.findAll(PageRequest.of(page, size)));
+    @Transactional(readOnly = true)
+    public Invoices getInvoices(Integer page, Integer size) {
+        return LIST(invoices.findAllByOrderByDateAsc(PageRequest.of(page, size)));
     }
 }

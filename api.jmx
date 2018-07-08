@@ -258,14 +258,11 @@
   &quot;comment&quot;: &quot;nice place ${year} ${month}&quot;,&#xd;
   &quot;positions&quot;: [&#xd;
     {&#xd;
-      &quot;number&quot;: 1,&#xd;
-      &quot;amount&quot;: 731.59,&#xd;
+      &quot;cents&quot;: 73159,&#xd;
       &quot;description&quot;: &quot;rent&quot;&#xd;
     },&#xd;
- &#xd;
     {&#xd;
-      &quot;number&quot;: 2,&#xd;
-      &quot;amount&quot;: 137.95,&#xd;
+      &quot;cents&quot;: 13795,&#xd;
       &quot;description&quot;: &quot;ancillary&quot;&#xd;
     }&#xd;
   ]&#xd;

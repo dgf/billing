@@ -1,6 +1,6 @@
 # Aplatanao Billing Service
 
-## requirements
+## Requirements
 
 run a local PostgreSQL server
 
@@ -15,7 +15,7 @@ adapt connection properties, see `pom.xml`
         ...
     </properties>
 
-## development flow
+## Development flow
 
 migrate the storage
 
@@ -25,43 +25,24 @@ update JPA entities
 
     mvn generate-sources
 
-## crudl invoices
+## Data type mappings
 
-run the service
+- JAX-RS 2.1 + JPA 2.1 https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
+- OpenAPI 2.0 https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
+- PostgreSQL 9.4
+  - https://www.postgresql.org/docs/9.4/static/datatype.html
+  - https://www.tutorialspoint.com/postgresql/postgresql_data_types.htm
 
-    mvn spring-boot:run
+| Common name | OpenAPI 2.0     | JAX-RS 2.1  | JPA 2.1   | PostgreSQL 9.4 | Restriction                                           |
+| ----------- | --------------- | ----------- | --------- | -------------- |------------------------------------------------------ |
+| date        | string > date   | LocalDate   | LocalDate | **date**       | 4713 BC to 5874897 AD                                 |
+| integer     | integer > int32 | Integer     | short     | **smallint**   | 2 bytes: -32768 to +32767                             |
+| integer     | integer > int32 | Integer     | Integer   | **integer**    | 4 bytes: -2147483648 to +2147483647                   |
+| long        | integer > int64 | Long        | Long      | **bigint**     | 8 bytes: -9223372036854775808 to +9223372036854775807 |
+| string      | string          | String      | string    | varchar(**n**) | **n** characters                                      |
 
-create invoice
+## TBD
 
-    curl --dump-header - \
-         --request POST \
-         --header "Content-Type: application/json" \
-         --data '{"date":"2018-07-01","code":"OFF_2018_07","comment":"kick off"}' \
-        http://localhost:8080/invoices
-
-    HTTP/1.1 200
-    Content-Type: application/json
-    Content-Length: 70
-    Date: Sun, 01 Jul 2018 18:57:55 GMT
-    {"id":1,"date":"2018-07-01","code":"OFF_2018_07","comment":"kick off"}%
-
-list invoices
-
-    curl --dump-header - http://localhost:8080/invoices
-
-    HTTP/1.1 200
-    Content-Type: application/json
-    Content-Length: 72
-    Date: Sun, 01 Jul 2018 18:58:24 GMT
-    [{"id":1,"date":"2018-07-01","code":"OFF_2018_07","comment":"kick off"}]%
-
-get invoice
-
-    curl --dump-header - http://localhost:8080/invoices/1
-
-    HTTP/1.1 200
-    Content-Type: application/json
-    Content-Length: 70
-    Date: Sun, 01 Jul 2018 19:47:13 GMT
-    {"id":1,"date":"2018-07-01","code":"OFF_2018_07","comment":"kick off"}%
-
+- [ ] re-add custom revengStrategy parameter for the Hibernate Codegen configuration, see https://github.com/hibernate/hibernate-tools/pull/1017
+- [ ] support Java long value literal restrictions for the @Min and @Max annotations in Swagger Codegen
+- [ ] support referenced type definitions in Swagger Codegen to reuse common restrictions like year and code

@@ -6,7 +6,7 @@ CREATE TABLE r_invoices_per_month (
   PRIMARY KEY (year, month)
 );
 
-CREATE OR REPLACE FUNCTION f_get_invoices_per_month(year smallint)
+CREATE FUNCTION f_get_invoices_per_month(year smallint)
   RETURNS SETOF r_invoices_per_month AS $$
 WITH invoices AS (
     SELECT
