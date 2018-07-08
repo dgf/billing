@@ -10,5 +10,5 @@ import java.util.List;
 public interface InvoicesPerMonthRepository extends Repository<InvoicesPerMonthResource, InvoicesPerMonthResourceId> {
 
     @Query(value = "SELECT * FROM f_get_invoices_per_month(:year)", nativeQuery = true)
-    List<InvoicesPerMonthResource> findByYear(@Param("year") Long year);
+    List<InvoicesPerMonthResource> findByYear(@Param("year") short year);
 }

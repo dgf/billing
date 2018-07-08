@@ -2,24 +2,25 @@ swagger: 2.0
 
 info:
   title: Aplatanao Billing Service
-  description: Implementation of the Aplatanao Billing Service.
+  description: API of the Aplatanao Billing Service.
   version: 1.0.0
   license:
     name: MIT License
 
 host: localhost:8080
-basePath: /
+basePath: /api
 schemes:
   - http
+  - https
 
 paths:
 
   /invoices:
-    description: Invoices
+    description: Invoices resource.
 
     get:
       operationId: getInvoices
-      summary: Returns a list of invoices.
+      summary: Return a paged invoice list.
       produces:
       - application/json
       parameters:
@@ -37,7 +38,7 @@ paths:
 
     post:
       operationId: addInvoice
-      summary: Creates a new invoice.
+      summary: Add a new invoice.
       consumes:
         - application/json
       produces:
@@ -57,30 +58,24 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/Validation'
-        403:
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/Error'
         500:
           description: Error
           schema:
             $ref: '#/definitions/Error'
 
-  /invoices/{id}:
-    description: Invoice
+  /invoices/{code}:
 
     get:
-      operationId: getInvoiceById
-      summary: Find invoice by ID.
+      operationId: getInvoiceByCode
+      summary: Get an invoice by code.
       produces:
       - application/json
       parameters:
-      - name: id
+      - name: code
         in: path
-        description: ID of invoice to return.
+        description: Code of the invoice to return.
         required: true
-        type: integer
-        format: int64
+        type: string
       responses:
         200:
           description: OK
@@ -95,82 +90,26 @@ paths:
           schema:
             $ref: '#/definitions/Error'
 
-  /payments:
-    description: Payments
+  /reports:
+    description: Reports resource.
 
+  /reports/invoices/{year}:
     get:
-      operationId: getPayments
-      summary: Returns a list of payments.
+      operationId: getInvoicesPerMonth
+      summary: Get invoices report.
       produces:
       - application/json
       parameters:
-      - $ref: '#/parameters/Page'
-      - $ref: '#/parameters/Size'
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/Payments'
-        500:
-          description: Error
-          schema:
-            $ref: '#/definitions/Error'
-
-    post:
-      operationId: addPayment
-      summary: Creates a new payment.
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/Payment'
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/Payment'
-        400:
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Validation'
-        403:
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/Error'
-        500:
-          description: Error
-          schema:
-            $ref: '#/definitions/Error'
-
-  /payments/{id}:
-    description: Payment
-
-    get:
-      operationId: getPaymentById
-      summary: Find payment by ID.
-      produces:
-      - application/json
-      parameters:
-      - name: id
+      - name: year
         in: path
-        description: ID of payment to return.
+        description: Year of invoices to be analyzed.
         required: true
         type: integer
-        format: int64
       responses:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Payment'
-        404:
-          description: Not Found
-          schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/InvoicesPerMonth'
         500:
           description: Error
           schema:
@@ -180,7 +119,7 @@ parameters:
 
   Page:
     name: page
-    description: Page to return.
+    description: The page to be returned.
     in: query
     required: true
     type: integer
@@ -190,7 +129,7 @@ parameters:
 
   Size:
     name: size
-    description: Number of records to page.
+    description: Number of records to be returned.
     in: query
     required: true
     type: integer
@@ -200,65 +139,83 @@ parameters:
 definitions:
 
   Error:
+    description: Generic uncaught error.
     type: object
     properties:
       status:
+        description: HTTP status code.
         type: integer
         format: int32
       message:
         type: string
 
   Validation:
+    description: Input validation error with detailed explainations.
     type: object
     properties:
       status:
+        description: HTTP status code.
         type: integer
         format: int32
       messages:
+        description: Validation hints mapped by input hierarchy.
         type: object
         additionalProperties:
           type: string
 
+  InvoicePosition:
+    type: object
+    required:
+    - number
+    - amount
+    - description
+    properties:
+      number:
+        type: integer
+        format: int32
+      amount:
+        type: number
+      description:
+        type: string
+
   Invoice:
     type: object
     required:
-    - date
     - code
+    - date
     properties:
-      id:
-        type: integer
-        format: int64
+      code:
+        type: string
       date:
         type: string
         format: date
-      code:
-        type: string
       comment:
         type: string
+      positions:
+        type: array
+        items:
+          $ref: '#/definitions/InvoicePosition'
 
   Invoices:
     type: array
     items:
       $ref: '#/definitions/Invoice'
 
-  Payment:
-    type: object
-    required:
-    - date
-    - code
-    properties:
-      id:
-        type: integer
-        format: int64
-      date:
-        type: string
-        format: date
-      code:
-        type: string
-      comment:
-        type: string
-
-  Payments:
+  InvoicesPerMonth:
     type: array
     items:
-      $ref: '#/definitions/Payment'
+      type: object
+      required:
+      - year
+      - month
+      - count
+      - amount
+      properties:
+        year:
+          type: integer
+        month:
+          type: integer
+        count:
+          type: integer
+        amount:
+          type: number

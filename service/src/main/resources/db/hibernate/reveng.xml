@@ -4,7 +4,7 @@
         "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
 <hibernate-reverse-engineering>
     <type-mapping>
-        <sql-type jdbc-type="INTEGER" hibernate-type="java.lang.Long"/>
+        <!--sql-type jdbc-type="INTEGER" hibernate-type="java.lang.Long"/-->
         <sql-type jdbc-type="DATE" hibernate-type="org.joda.time.LocalDate"/>
     </type-mapping>
 
@@ -17,4 +17,12 @@
             Aplatanao Billing Persistence Class
         </meta>
     </table-filter>
+
+    <table schema="public" name="t_invoice_position">
+        <foreign-key constraint-name="t_invoice_position_invoice_code_fkey">
+            <column-ref local-column="invoice_code" foreign-column="code"/>
+            <set cascade="all"/>
+        </foreign-key>
+    </table>
+
 </hibernate-reverse-engineering>

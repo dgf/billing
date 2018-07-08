@@ -26,5 +26,6 @@ public class JerseyConfig extends ResourceConfig {
         register(CatchAllExceptionMapper.class);
 
         register(InvoiceResource.class);
+        register(ReportsResource.class);
     }
 }

@@ -35,6 +35,7 @@ public class ReverseEngineeringStrategyTest {
                 {"r_c", "Cresource"},
                 {"r_cd", "CdResource"},
                 {"t_invoice", "InvoiceTable"},
+                {"t_invoice_position", "InvoicePositionTable"},
                 {"v_invoices", "InvoicesView"},
                 {"r_statistic", "StatisticResource"}});
     }
