@@ -2,6 +2,7 @@ package org.aplatanao.billing.configuration;
 
 import org.aplatanao.billing.provider.*;
 import org.aplatanao.billing.service.InvoiceResource;
+import org.aplatanao.billing.service.ReportsResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,6 +23,7 @@ public class JerseyConfig extends ResourceConfig {
         register(WebApplicationExceptionMapper.class);
         register(JsonMappingExceptionMapper.class, 1);
         register(ConstraintViolationExceptionMapper.class);
+        register(CatchAllExceptionMapper.class);
 
         register(InvoiceResource.class);
     }

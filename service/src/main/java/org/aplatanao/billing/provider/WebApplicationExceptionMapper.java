@@ -1,23 +1,14 @@
 package org.aplatanao.billing.provider;
 
-import org.aplatanao.billing.rest.model.Error;
-
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplicationException> {
+public class WebApplicationExceptionMapper extends AbstractErrorExceptionMapperJSON<WebApplicationException> {
 
     @Override
-    public Response toResponse(WebApplicationException e) {
-        return Response.status(e.getResponse().getStatus())
-                .type(MediaType.APPLICATION_JSON)
-                .entity(new Error()
-                        .status(e.getResponse().getStatus())
-                        .message(e.getMessage()))
-                .build();
+    Response.Status getStatus(WebApplicationException exception) {
+        return Response.Status.fromStatusCode(exception.getResponse().getStatus());
     }
 }
