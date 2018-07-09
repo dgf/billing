@@ -4,24 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Aplatanao Billing API</name>
-    <groupId>org.aplatanao.billing</groupId>
     <artifactId>api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <parent>
+        <groupId>org.aplatanao.billing</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.0.3.RELEASE</version>
+                <version>${sping.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -32,13 +30,12 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey2-jaxrs</artifactId>
-            <version>1.5.15</version>
+            <version>${swagger.jersey2.jaxrs.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -47,7 +44,7 @@
             <plugin>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>${swagger.codegen.maven.plugin.version}</version>
                 <configuration>
                     <apiPackage>org.aplatanao.billing.rest.api</apiPackage>
                     <modelPackage>org.aplatanao.billing.rest.model</modelPackage>
@@ -69,7 +66,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${build.helper.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
