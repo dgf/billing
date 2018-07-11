@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Aplatanao Billing API</name>
+    <name>Aplatanao Billing :: API :: JAX-RS OpenAPI</name>
     <artifactId>api</artifactId>
     <packaging>jar</packaging>
 
@@ -11,26 +11,13 @@
         <groupId>org.aplatanao.billing</groupId>
         <artifactId>parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${sping.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey2-jaxrs</artifactId>
-            <version>${swagger.jersey2.jaxrs.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -41,10 +28,10 @@
 
     <build>
         <plugins>
+            <!-- generate JAX-RS classes from OpenAPI -->
             <plugin>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>${swagger.codegen.maven.plugin.version}</version>
                 <configuration>
                     <apiPackage>org.aplatanao.billing.rest.api</apiPackage>
                     <modelPackage>org.aplatanao.billing.rest.model</modelPackage>
@@ -63,10 +50,10 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- include JAX-RS classes from OpenAPI -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build.helper.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>

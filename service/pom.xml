@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Aplatanao Billing Service</name>
+    <name>Aplatanao Billing :: Service :: Spring Boot</name>
     <artifactId>service</artifactId>
     <packaging>jar</packaging>
 
@@ -11,40 +11,14 @@
         <groupId>org.aplatanao.billing</groupId>
         <artifactId>parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${sping.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-
-        <!-- Runtime -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <!--dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency-->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
@@ -52,17 +26,17 @@
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
-            <version>${usertype.core.version}</version>
         </dependency>
-
-        <!-- Swagger REST API -->
         <dependency>
             <groupId>org.aplatanao.billing</groupId>
-            <version>${project.version}</version>
             <artifactId>api</artifactId>
+            <version>${project.version}</version>
         </dependency>
-
-        <!-- Testing -->
+        <dependency>
+            <groupId>org.aplatanao.billing</groupId>
+            <artifactId>persistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -71,7 +45,7 @@
     </dependencies>
 
     <build>
-        <!-- filter resources to replace properties -->
+        <!-- filter resources to replace property place holders -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -81,26 +55,32 @@
 
         <plugins>
 
-            <!-- Spring Boot integration -->
+            <!-- read connection properties -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <!-- replace resource property place holders -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <delimiters>
-                        <delimiter>@</delimiter>
-                    </delimiters>
-                    <useDefaultDelimiters>false</useDefaultDelimiters>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>../connection.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- filter resources placeholder with connection properties -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>resources</goal>
                         </goals>
@@ -108,92 +88,10 @@
                 </executions>
             </plugin>
 
-            <!-- database migrations -->
+            <!-- boot it up with Maven -->
             <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>5.1.3</version>
-                <configuration>
-                    <url>${postgres.url}</url>
-                    <user>${postgres.username}</user>
-                    <password>${postgres.password}</password>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <!-- generate JPA classes from DDL -->
-            <plugin>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-tools-maven-plugin</artifactId>
-                <version>${hibernate.tools.version}</version>
-                <configuration>
-                    <ejb3>true</ejb3>
-                    <jdk5>true</jdk5>
-                    <packageName>org.aplatanao.billing.persistence</packageName>
-                    <revengStrategy>org.aplatanao.billing.hibernate.ReverseEngineeringStrategy</revengStrategy>
-                    <templatePath>${project.basedir}/src/main/resources/db/hibernate</templatePath>
-                    <revengFile>${project.basedir}/src/main/resources/db/hibernate/reveng.xml</revengFile>
-                    <propertyFile>${project.build.directory}/classes/db/hibernate/reveng.properties</propertyFile>
-                    <outputDirectory>${project.build.directory}/generated-sources/hibernate</outputDirectory>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-entitymanager</artifactId>
-                        <version>${hibernate.entitymanager.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib-nodep</artifactId>
-                        <version>${cglib.nodep.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.aplatanao.billing</groupId>
-                        <artifactId>reveng</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>Entity generation</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>hbm2java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build.helper.maven.plugin.version}</version>
-                <executions>
-                    <!-- include generated classes from Swagger and DDL -->
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/hibernate</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
