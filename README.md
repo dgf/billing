@@ -14,11 +14,12 @@ call Flyway
 
     ../migrations$ mvn clean initialize flyway:info
 
-add a new one, see:
+see https://flywaydb.org/documentation/migrations#sql-based-migrations
+and add a new one to the structure
 
     $ ls -al migrations/src/main/resources/db/migration/
     ...
-    -rw-r--r-- 1 dgf 1049089 376 Jul  9 08:56 V1__Create_invoice_table.sql
+    -rw-r--r-- 1 dgf 1049089 376 Jul  9 08:56 V2__Create_invoice_table.sql
     ...
 
 migrate to the latest one
@@ -66,6 +67,7 @@ generate classes
 | integer     | integer > int32 | Integer     | Integer   | **integer**    | 4 bytes: -2147483648 to +2147483647                   |
 | long        | integer > int64 | Long        | Long      | **bigint**     | 8 bytes: -9223372036854775808 to +9223372036854775807 |
 | string      | string          | String      | string    | varchar(**n**) | **n** characters                                      |
+| UUIDv4      | string          | String      | UUID      | **uuid**       | 16 bytes                                              |
 
 ### TBD
 

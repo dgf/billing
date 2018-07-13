@@ -6,6 +6,14 @@ import org.hibernate.cfg.reveng.TableIdentifier;
 public class ReverseEngineeringStrategy extends DefaultReverseEngineeringStrategy {
 
     @Override
+    public String columnToHibernateTypeName(TableIdentifier table, String columnName, int sqlType, int length, int precision, int scale, boolean nullable, boolean generatedIdentifier) {
+        if (sqlType == 1111 || sqlType == -2) { // 1111 = UUID, -2 = REFERENCE
+            return "java.util.UUID";
+        }
+        return super.columnToHibernateTypeName(table, columnName, sqlType, length, precision, scale, nullable, generatedIdentifier);
+    }
+
+    @Override
     public String tableToClassName(TableIdentifier tableIdentifier) {
         String name = tableIdentifier.getName();
         if (name.length() > 2) {

@@ -9,18 +9,18 @@
     </type-mapping>
 
     <!-- ignore meta data -->
-    <table-filter match-schema="public" match-name="flyway_schema_history" exclude="true"/>
-    <table-filter match-schema="public" match-name="v_.*" exclude="true"/>
+    <table-filter match-schema="billing" match-name="flyway_schema_history" exclude="true"/>
+    <table-filter match-schema="billing" match-name="v_.*" exclude="true"/>
 
-    <table-filter match-schema="public" match-name=".*">
+    <table-filter match-schema="billing" match-name=".*">
         <meta attribute="class-description">
             Aplatanao Billing Persistence Class
         </meta>
     </table-filter>
 
-    <table schema="public" name="t_invoice_position">
-        <foreign-key constraint-name="t_invoice_position_invoice_code_fkey">
-            <column-ref local-column="invoice_code" foreign-column="code"/>
+    <table schema="billing" name="t_invoice_position">
+        <foreign-key constraint-name="t_invoice_position_invoice_fkey">
+            <column-ref local-column="invoice" foreign-column="uuid"/>
             <set cascade="all"/>
         </foreign-key>
     </table>

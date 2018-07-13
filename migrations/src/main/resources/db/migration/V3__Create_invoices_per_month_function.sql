@@ -13,8 +13,8 @@ WITH invoices AS (
       i.*,
       sum(p.cents) cents
     FROM t_invoice i, t_invoice_position p
-    WHERE i.code = p.invoice_code AND EXTRACT(YEAR FROM date) = year
-    GROUP BY i.code
+    WHERE i.uuid = p.invoice AND EXTRACT(YEAR FROM date) = year
+    GROUP BY i.uuid
 )
 SELECT
   year,

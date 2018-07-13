@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -37,7 +34,7 @@ public class InvoiceService implements InvoicesApi {
                 .mapToObj(i -> {
                     InvoicePosition p = positions.get(i);
                     InvoicePositionTableId id = new InvoicePositionTableId();
-                    id.setInvoiceCode(invoice.getCode());
+                    id.setInvoice(invoice.getUuid());
                     id.setNumber((short) i);
 
                     InvoicePositionTable table = new InvoicePositionTable();
@@ -55,12 +52,12 @@ public class InvoiceService implements InvoicesApi {
         invoice.setCode(i.getCode());
         invoice.setComment(i.getComment());
         invoice.setDate(i.getDate());
-        invoice.setInvoicePositionTables(POST(invoice, i.getPositions()));
         return invoice;
     }
 
     private static Invoice GET(InvoiceTable i) {
         return new Invoice()
+                .uuid(i.getUuid().toString())
                 .code(i.getCode())
                 .date(i.getDate())
                 .comment(i.getComment())
@@ -73,7 +70,6 @@ public class InvoiceService implements InvoicesApi {
                         .collect(Collectors.toList()));
     }
 
-
     private static Invoices LIST(Page<InvoiceTable> p) {
         Invoices i = new Invoices();
         i.addAll(p.map(InvoiceService::GET).getContent());
@@ -83,17 +79,19 @@ public class InvoiceService implements InvoicesApi {
     @Override
     @Transactional
     public Invoice addInvoice(Invoice body) {
-        return GET(invoices.save(POST(body)));
+        InvoiceTable i = invoices.save(POST(body));
+        i.setInvoicePositionTables(POST(i, body.getPositions()));
+        return GET(invoices.save(i));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Invoice getInvoiceByCode(String code) {
-        Optional<InvoiceTable> optional = invoices.findById(code);
+    public Invoice getInvoiceByUUID(String uuid) {
+        Optional<InvoiceTable> optional = invoices.findById(UUID.fromString(uuid));
         if (optional.isPresent()) {
             return GET(optional.get());
         }
-        throw new NotFoundException("Invoice " + code + " not found.");
+        throw new NotFoundException("Invoice " + uuid + " not found.");
     }
 
     @Override

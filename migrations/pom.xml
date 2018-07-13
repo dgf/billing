@@ -47,6 +47,7 @@
                     <url>${postgres.url}</url>
                     <user>${postgres.username}</user>
                     <password>${postgres.password}</password>
+                    <schemas>billing</schemas>
                 </configuration>
             </plugin>
         </plugins>

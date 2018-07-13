@@ -53,12 +53,12 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/Error'
-  '/invoices/{code}':
+  '/invoices/{uuid}':
     parameters:
-      - $ref: '#/parameters/Code'
+      - $ref: '#/parameters/UUID'
     get:
-      summary: Get an invoice by code.
-      operationId: getInvoiceByCode
+      summary: Get an invoice by UUID.
+      operationId: getInvoiceByUUID
       responses:
         '200':
           description: OK
@@ -89,14 +89,15 @@ paths:
           schema:
             $ref: '#/definitions/Error'
 parameters:
-  Code:
-    description: Code of the resource to be returned.
+  UUID:
+    description: UUID of the resource to be returned.
     required: true
     in: path
-    name: code
+    name: uuid
     type: string
-    minLength: 3
-    maxLength: 20
+    format: uuid4
+    pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[4][0-9a-fA-F]{3}\-[89abAB][0-9a-fA-F]{3}\-[0-9a-fA-F]{12}$'
+
   Page:
     description: The page to be returned.
     in: query
@@ -175,6 +176,10 @@ definitions:
       - code
       - date
     properties:
+      uuid:
+        type: string
+        format: uuid4
+        readOnly: true
       code:
         type: string
         minLength: 3
