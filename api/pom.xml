@@ -52,6 +52,12 @@
                     <configOptions>
                         <interfaceOnly>true</interfaceOnly>
                     </configOptions>
+                    <typeMappings>
+                        <typeMapping>DateTime=LocalDateTime</typeMapping>
+                    </typeMappings>
+                    <importMappings>
+                        <importMapping>LocalDateTime=org.joda.time.LocalDateTime</importMapping>
+                    </importMappings>
                 </configuration>
                 <executions>
                     <execution>

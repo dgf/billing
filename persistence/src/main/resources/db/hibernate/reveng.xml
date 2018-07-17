@@ -5,6 +5,7 @@
 <hibernate-reverse-engineering>
     <type-mapping>
         <sql-type jdbc-type="DATE" hibernate-type="org.joda.time.LocalDate"/>
+        <sql-type jdbc-type="TIMESTAMP" hibernate-type="org.joda.time.LocalDateTime"/>
     </type-mapping>
 
     <!-- ignore meta data -->

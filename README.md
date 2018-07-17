@@ -34,7 +34,7 @@ build the whole project
 
 boot it up
 
-    ../service mvn clean spring-boot:run
+    ../service$ mvn clean spring-boot:run
 
 ## Development
 
@@ -42,7 +42,7 @@ boot it up
 
 generate classes
 
-    ../api$ mvn clean verify
+    ../persistence$ mvn clean verify
 
 ### JAX-RS API
 
@@ -60,14 +60,15 @@ generate classes
   - https://www.postgresql.org/docs/9.4/static/datatype.html
   - https://www.tutorialspoint.com/postgresql/postgresql_data_types.htm
 
-| Common name | OpenAPI 2.0     | JAX-RS 2.1  | JPA 2.1   | PostgreSQL 9.4 | Restriction                                           |
-| ----------- | --------------- | ----------- | --------- | -------------- |------------------------------------------------------ |
-| date        | string > date   | LocalDate   | LocalDate | **date**       | 4713 BC to 5874897 AD                                 |
-| integer     | integer > int32 | Integer     | short     | **smallint**   | 2 bytes: -32768 to +32767                             |
-| integer     | integer > int32 | Integer     | Integer   | **integer**    | 4 bytes: -2147483648 to +2147483647                   |
-| long        | integer > int64 | Long        | Long      | **bigint**     | 8 bytes: -9223372036854775808 to +9223372036854775807 |
-| string      | string          | String      | string    | varchar(**n**) | **n** characters                                      |
-| UUIDv4      | string          | String      | UUID      | **uuid**       | 16 bytes                                              |
+| Common name | OpenAPI 2.0        | JAX-RS 2.1  | JPA 2.1       | PostgreSQL 9.4 | Restriction                                           |
+| ----------- | ------------------ | ----------- | ------------- | -------------- |------------------------------------------------------ |
+| date        | string > date      | LocalDate   | LocalDate     | **date**       | 4713 BC to 5874897 AD                                 |
+| dateTime    | string > date-time | Instant     | LocalDateTime | **timestamp**  | 4713 BC	294276 AD 1 microsecond / 14 digits     |
+| integer     | integer > int32    | Integer     | short         | **smallint**   | 2 bytes: -32768 to +32767                             |
+| integer     | integer > int32    | Integer     | Integer       | **integer**    | 4 bytes: -2147483648 to +2147483647                   |
+| long        | integer > int64    | Long        | Long          | **bigint**     | 8 bytes: -9223372036854775808 to +9223372036854775807 |
+| string      | string             | String      | string        | varchar(**n**) | **n** characters                                      |
+| UUIDv4      | string             | String      | UUID          | **uuid**       | 16 bytes                                              |
 
 ### TBD
 

@@ -58,6 +58,7 @@ public class InvoiceService implements InvoicesApi {
     private static Invoice GET(InvoiceTable i) {
         return new Invoice()
                 .uuid(i.getUuid().toString())
+                .createdAt(i.getCreatedAt())
                 .code(i.getCode())
                 .date(i.getDate())
                 .comment(i.getComment())
@@ -65,8 +66,10 @@ public class InvoiceService implements InvoicesApi {
                         .stream()
                         .sorted(Comparator.comparingInt(p -> p.getId().getNumber()))
                         .map(p -> new InvoicePosition()
+                                .createdAt(p.getCreatedAt())
+                                .description(p.getDescription())
                                 .cents(p.getCents())
-                                .description(p.getDescription()))
+                        )
                         .collect(Collectors.toList()));
     }
 
