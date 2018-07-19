@@ -4,8 +4,8 @@
         "@project.build.directory@/classes/db/hibernate/hibernate-reverse-engineering-3.0.dtd" >
 <hibernate-reverse-engineering>
     <type-mapping>
-        <sql-type jdbc-type="DATE" hibernate-type="org.joda.time.LocalDate"/>
-        <sql-type jdbc-type="TIMESTAMP" hibernate-type="org.joda.time.LocalDateTime"/>
+        <sql-type jdbc-type="DATE" hibernate-type="java.time.LocalDate"/>
+        <sql-type jdbc-type="TIMESTAMP" hibernate-type="java.time.OffsetDateTime"/>
     </type-mapping>
 
     <!-- ignore meta data -->

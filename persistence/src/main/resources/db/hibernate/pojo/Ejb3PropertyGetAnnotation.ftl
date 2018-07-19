@@ -32,13 +32,5 @@ ${pojo.generateCollectionAnnotation(property, md)}
 ${pojo.generateAnnColumnAnnotation(property)}
 ${pojo.generateBasicAnnotation(property)}
 <#-- /timestamps -->
-<#-- map joda times -->
-<#if pojo.getJavaTypeName(property, jdk5) == "LocalDate">
-@${pojo.importType("org.hibernate.annotations.Type")}(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-</#if>
-<#if pojo.getJavaTypeName(property, jdk5) == "LocalDateTime">
-@${pojo.importType("org.hibernate.annotations.Type")}(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-</#if>
-<#-- /map joda times -->
 </#if>
 </#if>
