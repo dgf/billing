@@ -88,6 +88,22 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/Error'
+  '/payments':
+    get:
+      summary: Paged payment list.
+      operationId: getPayments
+      parameters:
+        - $ref: '#/parameters/Page'
+        - $ref: '#/parameters/Size'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Payments'
+        '500':
+          description: Error
+          schema:
+            $ref: '#/definitions/Error'
 parameters:
   UUID:
     description: UUID of the resource to be returned.
@@ -233,3 +249,36 @@ definitions:
         cents:
           type: integer
           format: int64
+  Payment:
+    description: Payment.
+    type: object
+    required:
+      - code
+      - date
+      - cents
+    properties:
+      uuid:
+        type: string
+        format: uuid4
+        readOnly: true
+      created_at:
+        type: string
+        format: date-time
+        readOnly: true
+      code:
+        type: string
+        minLength: 3
+        maxLength: 20
+      date:
+        type: string
+        format: date
+      comment:
+        type: string
+      cents:
+        type: integer
+        format: int64
+  Payments:
+    description: Payment list.
+    type: array
+    items:
+      $ref: '#/definitions/Payment'

@@ -7,6 +7,7 @@ import org.aplatanao.billing.provider.exception.WebApplicationExceptionMapper;
 import org.aplatanao.billing.provider.locale.AcceptLanguageRequestFilter;
 import org.aplatanao.billing.provider.locale.ValidationConfigurationContextResolver;
 import org.aplatanao.billing.service.InvoiceService;
+import org.aplatanao.billing.service.PaymentService;
 import org.aplatanao.billing.service.ReportsService;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ public class JerseyConfig extends ResourceConfig {
         register(CatchAllExceptionMapper.class);
 
         register(InvoiceService.class);
+        register(PaymentService.class);
         register(ReportsService.class);
     }
 }
