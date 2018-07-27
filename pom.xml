@@ -24,6 +24,7 @@
         <module>migrations</module>
         <module>reveng</module>
         <module>persistence</module>
+        <module>processes</module>
         <module>service</module>
     </modules>
 </project>

@@ -1,5 +1,21 @@
 # Aplatanao Billing
 
+More a development template than a usable billing application.
+
+Demonstration of a model driven and process based development on an actual Java stack.
+
+Operated with the following basics:
+
+- Spring Boot https://spring.io/projects/spring-boot
+- Camunda https://camunda.com/
+- PostgreSQL https://www.postgresql.org/
+
+And the following helpers:
+
+- Flyway https://flywaydb.org/
+- Hibernate Tools https://hibernate.org/tools/
+- Swagger Codegen https://swagger.io/tools/swagger-codegen/
+
 ## Requirements
 
 run a local PostgreSQL server
@@ -37,6 +53,12 @@ boot it up
     ../service$ mvn clean spring-boot:run
 
 ## Development
+
+### Useful development tools
+
+- IntelliJ IDEA to code and for SQL https://www.jetbrains.com/idea/ 
+- Swagger Editor for Open API definitions https://editor.swagger.io/ 
+- Camunda Modeler for BPMN definitions https://camunda.com/products/modeler/
 
 ### JPA entities
 

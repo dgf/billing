@@ -20,10 +20,6 @@
             <artifactId>spring-boot-starter-jersey</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jadira.usertype</groupId>
-            <artifactId>usertype.core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.aplatanao.billing</groupId>
             <artifactId>specification</artifactId>
             <version>${project.version}</version>
@@ -32,6 +28,26 @@
             <groupId>org.aplatanao.billing</groupId>
             <artifactId>persistence</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-core</artifactId>
+            <version>1.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-dataformat-all</artifactId>
+            <version>1.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-engine-plugin-spin</artifactId>
+            <version>7.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -84,10 +100,20 @@
                 </executions>
             </plugin>
 
-            <!-- boot it up with Maven -->
+            <!-- boot it up and package it with Maven -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <layout>JAR</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -8,6 +8,9 @@ import org.aplatanao.billing.rest.api.InvoicesApi;
 import org.aplatanao.billing.rest.model.Invoice;
 import org.aplatanao.billing.rest.model.InvoicePosition;
 import org.aplatanao.billing.rest.model.Invoices;
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.variable.Variables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +27,12 @@ public class InvoiceService implements InvoicesApi {
 
     private InvoiceRepository invoices;
 
+    private final RuntimeService runtimeService;
+
     @Autowired
-    public InvoiceService(InvoiceRepository invoices) {
+    public InvoiceService(InvoiceRepository invoices, RuntimeService runtimeService) {
         this.invoices = invoices;
+        this.runtimeService = runtimeService;
     }
 
     private static Set<InvoicePositionTable> POST(InvoiceTable invoice, List<InvoicePosition> positions) {
@@ -82,9 +88,21 @@ public class InvoiceService implements InvoicesApi {
     @Override
     @Transactional
     public Invoice addInvoice(Invoice body) {
+
+        // create process instance
+        ProcessInstance instance = runtimeService.startProcessInstanceByKey("billing-process");
+
+        // serialize payload and attach it to the process
+        runtimeService.setVariable(instance.getId(), "invoice",
+                Variables.objectValue(body).serializationDataFormat("application/json").create());
+
+        return new Invoice();
+        /*
+
         InvoiceTable i = invoices.save(POST(body));
         i.setInvoicePositionTables(POST(i, body.getPositions()));
         return GET(invoices.save(i));
+        */
     }
 
     @Override
