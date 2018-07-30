@@ -10,6 +10,9 @@
 
     <!-- ignore meta data -->
     <table-filter match-schema="billing" match-name="flyway_schema_history" exclude="true"/>
+    <!-- ignore camunda tables -->
+    <table-filter match-schema="billing" match-name="act_.*" exclude="true"/>
+    <!-- ignore views -->
     <table-filter match-schema="billing" match-name="v_.*" exclude="true"/>
 
     <table-filter match-schema="billing" match-name=".*">
