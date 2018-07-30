@@ -38,22 +38,46 @@
                 <artifactId>jackson-annotations</artifactId>
                 <version>2.9.6</version>
             </dependency>
+            <!-- Java JSR 310 support -->
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>2.9.6</version>
             </dependency>
+            <!-- camunda process engine -->
             <dependency>
-                <groupId>org.jadira.usertype</groupId>
-                <artifactId>usertype.core</artifactId>
-                <version>6.0.1.GA</version>
+                <groupId>org.camunda.bpm.springboot</groupId>
+                <artifactId>camunda-bpm-spring-boot-starter</artifactId>
+                <version>3.0.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-engine-spring</artifactId>
+                <version>7.9.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-engine-plugin-spin</artifactId>
+                <version>7.9.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.spin</groupId>
+                <artifactId>camunda-spin-core</artifactId>
+                <version>1.5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.spin</groupId>
+                <artifactId>camunda-spin-dataformat-json-jackson</artifactId>
+                <version>1.5.3</version>
+            </dependency>
+
             <!-- Hibernate reverse tools, patched for strategy, see https://github.com/dgf/hibernate-tools -->
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-tools</artifactId>
                 <version>5.3.2-SNAPSHOT</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>
