@@ -1,4 +1,4 @@
-package org.aplatanao.billing.service;
+package org.aplatanao.billing.endpoint;
 
 import org.aplatanao.billing.persistence.InvoicesPerMonthRepository;
 import org.aplatanao.billing.rest.api.ReportsApi;
@@ -12,12 +12,12 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Service
-public class ReportsService implements ReportsApi {
+public class ReportsEndpoint implements ReportsApi {
 
     private InvoicesPerMonthRepository perMonth;
 
     @Autowired
-    public ReportsService(InvoicesPerMonthRepository perMonth) {
+    public ReportsEndpoint(InvoicesPerMonthRepository perMonth) {
         this.perMonth = perMonth;
     }
 

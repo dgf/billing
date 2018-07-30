@@ -1,4 +1,4 @@
-package org.aplatanao.billing.service;
+package org.aplatanao.billing.endpoint;
 
 import org.aplatanao.billing.persistence.InvoicePositionTable;
 import org.aplatanao.billing.persistence.InvoicePositionTableId;
@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-public class InvoiceService implements InvoicesApi {
+public class InvoiceEndpoint implements InvoicesApi {
 
     private InvoiceRepository invoices;
 
     private final RuntimeService runtimeService;
 
     @Autowired
-    public InvoiceService(InvoiceRepository invoices, RuntimeService runtimeService) {
+    public InvoiceEndpoint(InvoiceRepository invoices, RuntimeService runtimeService) {
         this.invoices = invoices;
         this.runtimeService = runtimeService;
     }
@@ -81,7 +81,7 @@ public class InvoiceService implements InvoicesApi {
 
     private static Invoices LIST(Page<InvoiceTable> p) {
         Invoices i = new Invoices();
-        i.addAll(p.map(InvoiceService::GET).getContent());
+        i.addAll(p.map(InvoiceEndpoint::GET).getContent());
         return i;
     }
 

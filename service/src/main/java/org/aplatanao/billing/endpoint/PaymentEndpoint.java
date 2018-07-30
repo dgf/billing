@@ -1,9 +1,8 @@
-package org.aplatanao.billing.service;
+package org.aplatanao.billing.endpoint;
 
 import org.aplatanao.billing.persistence.PaymentRepository;
 import org.aplatanao.billing.persistence.PaymentTable;
 import org.aplatanao.billing.rest.api.PaymentsApi;
-import org.aplatanao.billing.rest.model.Invoices;
 import org.aplatanao.billing.rest.model.Payment;
 import org.aplatanao.billing.rest.model.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 @Service
-public class PaymentService implements PaymentsApi {
+public class PaymentEndpoint implements PaymentsApi {
 
     private PaymentRepository payRepo;
 
     @Autowired
-    public PaymentService(PaymentRepository payRepo) {
+    public PaymentEndpoint(PaymentRepository payRepo) {
         this.payRepo = payRepo;
     }
 
@@ -41,7 +40,7 @@ public class PaymentService implements PaymentsApi {
 
     private Payments LIST(Page<PaymentTable> p) {
         Payments i = new Payments();
-        i.addAll(p.map(PaymentService::GET).getContent());
+        i.addAll(p.map(PaymentEndpoint::GET).getContent());
         return i;
     }
 
