@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,7 +11,7 @@
         <groupId>org.aplatanao.billing</groupId>
         <artifactId>parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../parent/pom.xml</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <dependencies>
@@ -41,7 +40,7 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
                 <configuration>
-                    <inputSpec>${project.basedir}/../api.yaml</inputSpec>
+                    <inputSpec>${project.basedir}/api.yaml</inputSpec>
                     <apiPackage>org.aplatanao.billing.rest.api</apiPackage>
                     <modelPackage>org.aplatanao.billing.rest.model</modelPackage>
                     <generateSupportingFiles>false</generateSupportingFiles>

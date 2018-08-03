@@ -20,11 +20,12 @@
         <module>dependencies</module>
         <module>parent</module>
 
-        <module>api</module>
-        <module>migrations</module>
         <module>reveng</module>
+        <module>migrations</module>
         <module>persistence</module>
+        <module>specification</module>
         <module>processes</module>
         <module>service</module>
+        <module>desktop</module>
     </modules>
 </project>

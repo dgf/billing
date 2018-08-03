@@ -4,37 +4,45 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Aplatanao Billing :: OpenAPI :: JAX-RS Client</name>
-    <artifactId>client</artifactId>
+    <name>Aplatanao Billing :: Desktop</name>
+    <artifactId>desktop</artifactId>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.aplatanao.billing</groupId>
         <artifactId>parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../parent/pom.xml</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-multipart</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
         </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+
+        <!-- JSON processing: jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+        </dependency>
+        <!--dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency-->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -45,14 +53,16 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
                 <configuration>
-                    <inputSpec>${project.basedir}/../api.yaml</inputSpec>
+                    <inputSpec>${project.basedir}/../specification/api.yaml</inputSpec>
                     <apiPackage>org.aplatanao.billing.rest.client.api</apiPackage>
                     <modelPackage>org.aplatanao.billing.rest.client.model</modelPackage>
                     <invokerPackage>org.aplatanao.billing.rest.client.invoker</invokerPackage>
                     <language>java</language>
-                    <library>jersey2</library>
+                    <library>resttemplate</library>
                     <configOptions>
                         <dateLibrary>java8</dateLibrary>
+                        <interfaceOnly>true</interfaceOnly>
+                        <performBeanValidation>true</performBeanValidation>
                     </configOptions>
                 </configuration>
                 <executions>
@@ -69,6 +79,7 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>add-swagger-source</id>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -77,6 +88,32 @@
                                 <source>${project.build.directory}/generated-sources/swagger/src/main/java</source>
                             </sources>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-swagger-test-source</id>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/swagger/src/test/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- boot it up and package it with Maven -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <layout>JAR</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
