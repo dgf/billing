@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
-public class JacksonConfig {
+public class Jackson {
 
     @Autowired
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {

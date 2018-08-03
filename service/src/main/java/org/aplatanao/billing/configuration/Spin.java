@@ -8,7 +8,7 @@ import org.camunda.spin.spi.DataFormatConfigurator;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SpinConfig implements DataFormatConfigurator<JacksonJsonDataFormat> {
+public class Spin implements DataFormatConfigurator<JacksonJsonDataFormat> {
 
     @Override
     public Class<JacksonJsonDataFormat> getDataFormatClass() {

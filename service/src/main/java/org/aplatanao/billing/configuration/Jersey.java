@@ -17,9 +17,9 @@ import javax.ws.rs.ApplicationPath;
 
 @Configuration
 @ApplicationPath("/api")
-public class JerseyConfig extends ResourceConfig {
+public class Jersey extends ResourceConfig {
 
-    public JerseyConfig() {
+    public Jersey() {
         registerComponents();
     }
 
