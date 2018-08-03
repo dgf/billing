@@ -20,6 +20,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Page'
         - $ref: '#/parameters/Size'
+        - $ref: '#/parameters/YearQuery'
       responses:
         '200':
           description: OK
@@ -101,7 +102,7 @@ paths:
             $ref: '#/definitions/Error'
   '/reports/invoices/{year}':
     parameters:
-      - $ref: '#/parameters/Year'
+      - $ref: '#/parameters/YearPath'
     get:
       summary: Get invoices report.
       operationId: getInvoicesPerMonth
@@ -170,10 +171,19 @@ parameters:
     format: int32
     default: 20
     minimum: 5
-  Year:
+  YearPath:
     description: Year of resources to be returned.
     required: true
     in: path
+    name: year
+    type: integer
+    format: int32
+    minimum: 1978
+    maximum: 32767
+  YearQuery:
+    description: Year to filter a resource.
+    required: true
+    in: query
     name: year
     type: integer
     format: int32
@@ -293,7 +303,7 @@ definitions:
     items:
       $ref: '#/definitions/Invoice'
   InvoicesPerMonth:
-    description: Invoice per month report of a year FOO.
+    description: Invoice per month report of a year.
     type: array
     items:
       type: object

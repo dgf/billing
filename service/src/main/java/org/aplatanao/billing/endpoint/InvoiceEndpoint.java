@@ -76,7 +76,11 @@ public class InvoiceEndpoint implements InvoicesApi {
 
     @Override
     @Transactional(readOnly = true)
-    public Invoices getInvoices(Integer page, Integer size) {
-        return converter.toInvoices(invoices.findAllByOrderByDateAsc(PageRequest.of(page, size)));
+    public Invoices getInvoices(Integer page, Integer size, Integer year) {
+        PageRequest pr = PageRequest.of(page, size);
+        if (year == null) {
+            return converter.toInvoices(invoices.findAllByOrderByDateAsc(pr));
+        }
+        return converter.toInvoices(invoices.findByYear(year.shortValue(), pr));
     }
 }
