@@ -44,7 +44,34 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Invoice'
+            $ref: '#/definitions/TaskReference'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Validation'
+        '500':
+          description: Error
+          schema:
+            $ref: '#/definitions/Error'
+  '/invoices/approvals':
+    post:
+      summary: Complete an invoice approval task.
+      operationId: approveInvoice
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/InvoiceApproval'
+      responses:
+        '201':
+          description: Created (saved)
+          schema:
+            $ref: '#/definitions/InvoiceReference'
+        '204':
+          description: No Content (rejected)
         '400':
           description: Bad Request
           schema:
@@ -72,7 +99,6 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/Error'
-
   '/reports/invoices/{year}':
     parameters:
       - $ref: '#/parameters/Year'
@@ -100,6 +126,19 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Payments'
+        '500':
+          description: Error
+          schema:
+            $ref: '#/definitions/Error'
+  '/tasks':
+    get:
+      summary: Paged process task list.
+      operationId: getTasks
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Tasks'
         '500':
           description: Error
           schema:
@@ -172,6 +211,38 @@ definitions:
             type: object
             additionalProperties:
               type: string
+  InvoiceReference:
+    description: Invoice reference.
+    type: object
+    required:
+    - uuid
+    - code
+    - date
+    properties:
+      uuid:
+        type: string
+        format: uuid4
+        readOnly: true
+      code:
+        type: string
+        minLength: 3
+        maxLength: 20
+      date:
+        type: string
+        format: date
+  InvoiceApproval:
+    description: Invoice approval.
+    type: object
+    required:
+    - uuid
+    - approved
+    properties:
+      uuid:
+        type: string
+        format: uuid4
+        readOnly: true
+      approved:
+        type: boolean
   InvoicePosition:
     description: Invoice position.
     type: object
@@ -282,3 +353,48 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Payment'
+  TaskReference:
+    description: Process task reference.
+    type: object
+    required:
+    - uuid
+    properties:
+      uuid:
+        type: string
+        format: uuid4
+        readOnly: true
+      dueDate:
+        type: string
+        format: date
+      description:
+        type: string
+  Task:
+    description: Process task.
+    type: object
+    required:
+      - uuid
+      - name
+      - key
+      - priority
+    properties:
+      uuid:
+        type: string
+        format: uuid4
+        readOnly: true
+      name:
+        type: string
+      key:
+        type: string
+      priority:
+        type: integer
+        format: int32
+      dueDate:
+        type: string
+        format: date
+      description:
+        type: string
+  Tasks:
+    description: Process task list.
+    type: array
+    items:
+      $ref: '#/definitions/Task'

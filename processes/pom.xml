@@ -23,5 +23,15 @@
             <groupId>org.camunda.bpm</groupId>
             <artifactId>camunda-engine-spring</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.aplatanao.billing</groupId>
+            <artifactId>specification</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aplatanao.billing</groupId>
+            <artifactId>persistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,108 +1,67 @@
 package org.aplatanao.billing.endpoint;
 
-import org.aplatanao.billing.persistence.InvoicePositionTable;
-import org.aplatanao.billing.persistence.InvoicePositionTableId;
+import org.aplatanao.billing.Converter;
 import org.aplatanao.billing.persistence.InvoiceRepository;
 import org.aplatanao.billing.persistence.InvoiceTable;
+import org.aplatanao.billing.process.Engine;
 import org.aplatanao.billing.rest.api.InvoicesApi;
-import org.aplatanao.billing.rest.model.Invoice;
-import org.aplatanao.billing.rest.model.InvoicePosition;
-import org.aplatanao.billing.rest.model.Invoices;
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.variable.Variables;
+import org.aplatanao.billing.rest.model.*;
+import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class InvoiceEndpoint implements InvoicesApi {
 
     private InvoiceRepository invoices;
 
-    private final RuntimeService runtimeService;
+    private Engine engine;
+
+    private Converter converter;
 
     @Autowired
-    public InvoiceEndpoint(InvoiceRepository invoices, RuntimeService runtimeService) {
+    public InvoiceEndpoint(InvoiceRepository invoices, Engine engine, Converter converter) {
         this.invoices = invoices;
-        this.runtimeService = runtimeService;
-    }
-
-    private static Set<InvoicePositionTable> POST(InvoiceTable invoice, List<InvoicePosition> positions) {
-        return IntStream.range(0, positions.size())
-                .mapToObj(i -> {
-                    InvoicePosition p = positions.get(i);
-                    InvoicePositionTableId id = new InvoicePositionTableId();
-                    id.setInvoice(invoice.getUuid());
-                    id.setNumber((short) i);
-
-                    InvoicePositionTable table = new InvoicePositionTable();
-                    table.setId(id);
-                    table.setInvoiceTable(invoice);
-                    table.setCents(p.getCents());
-                    table.setDescription(p.getDescription());
-                    return table;
-                })
-                .collect(Collectors.toSet());
-    }
-
-    private static InvoiceTable POST(Invoice i) {
-        InvoiceTable invoice = new InvoiceTable();
-        invoice.setCode(i.getCode());
-        invoice.setComment(i.getComment());
-        invoice.setDate(i.getDate());
-        return invoice;
-    }
-
-    private static Invoice GET(InvoiceTable i) {
-        return new Invoice()
-                .uuid(i.getUuid().toString())
-                .createdAt(i.getCreatedAt())
-                .code(i.getCode())
-                .date(i.getDate())
-                .comment(i.getComment())
-                .positions(i.getInvoicePositionTables()
-                        .stream()
-                        .sorted(Comparator.comparingInt(p -> p.getId().getNumber()))
-                        .map(p -> new InvoicePosition()
-                                .createdAt(p.getCreatedAt())
-                                .description(p.getDescription())
-                                .cents(p.getCents())
-                        )
-                        .collect(Collectors.toList()));
-    }
-
-    private static Invoices LIST(Page<InvoiceTable> p) {
-        Invoices i = new Invoices();
-        i.addAll(p.map(InvoiceEndpoint::GET).getContent());
-        return i;
+        this.engine = engine;
+        this.converter = converter;
     }
 
     @Override
-    @Transactional
-    public Invoice addInvoice(Invoice body) {
+    public TaskReference addInvoice(Invoice body) {
+        Task task = engine.getTask(engine.start("newInvoiceMessage", "invoice", body));
+        return new TaskReference()
+                .uuid(task.getId())
+                .dueDate(converter.toLocalDate(task.getDueDate()))
+                .description(task.getDescription());
+    }
 
-        // create process instance
-        ProcessInstance instance = runtimeService.startProcessInstanceByKey("billing-process");
+    @Override
+    public InvoiceReference approveInvoice(@Valid InvoiceApproval body) {
+        String uuid = body.getUuid(); // TODO validate UUID
 
-        // serialize payload and attach it to the process
-        runtimeService.setVariable(instance.getId(), "invoice",
-                Variables.objectValue(body).serializationDataFormat("application/json").create());
+        // query and complete the approval task
+        Task task = engine.getTask(uuid);
+        if (task == null) {
+            throw new NotFoundException("Invoice approval " + uuid + " not found.");
+        }
+        engine.complete(task, "invoiceApproved", body.isApproved());
 
-        return new Invoice();
-        /*
-
-        InvoiceTable i = invoices.save(POST(body));
-        i.setInvoicePositionTables(POST(i, body.getPositions()));
-        return GET(invoices.save(i));
-        */
+        // fetch invoice and return reference
+        Invoice invoice = engine.getHistory(Invoice.class, task.getProcessInstanceId(), "invoice");
+        if (invoice == null) {
+            return null; // 204
+        }
+        return new InvoiceReference()
+                .uuid(invoice.getUuid())
+                .code(invoice.getCode())
+                .date(invoice.getDate());
     }
 
     @Override
@@ -110,7 +69,7 @@ public class InvoiceEndpoint implements InvoicesApi {
     public Invoice getInvoiceByUUID(String uuid) {
         Optional<InvoiceTable> optional = invoices.findById(UUID.fromString(uuid));
         if (optional.isPresent()) {
-            return GET(optional.get());
+            return converter.toInvoice(optional.get());
         }
         throw new NotFoundException("Invoice " + uuid + " not found.");
     }
@@ -118,6 +77,6 @@ public class InvoiceEndpoint implements InvoicesApi {
     @Override
     @Transactional(readOnly = true)
     public Invoices getInvoices(Integer page, Integer size) {
-        return LIST(invoices.findAllByOrderByDateAsc(PageRequest.of(page, size)));
+        return converter.toInvoices(invoices.findAllByOrderByDateAsc(PageRequest.of(page, size)));
     }
 }

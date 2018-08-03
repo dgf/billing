@@ -1,135 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0hrd90c" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="billing-collaboration">
-    <bpmn:participant id="billing-participant" name="Billing Collaboration" processRef="billing-process" />
+    <bpmn:participant id="billing-participant" name="Billing" processRef="billing-process" />
   </bpmn:collaboration>
+  <bpmn:message id="newInvoice" name="newInvoiceMessage" />
   <bpmn:process id="billing-process" name="Billing Process" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0n99z4g">
       <bpmn:lane id="approvement-lane" name="Approvement">
         <bpmn:flowNodeRef>approve-invoice-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_0pfgqb6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>start</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>reject-invoice-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>release-invoice-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>end-rejected</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>save-invoice-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>end-released</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="submission-lane" name="Submission">
-        <bpmn:flowNodeRef>save-invoice-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>start</bpmn:flowNodeRef>
-      </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:userTask id="approve-invoice-task" name="Approve invoice">
-      <bpmn:incoming>SequenceFlow_075qofc</bpmn:incoming>
+    <bpmn:startEvent id="start" name="POST&#10;/invoices">
+      <bpmn:outgoing>SequenceFlow_1t3gatm</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="newInvoice" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="approve-invoice-task" name="Approve invoice" camunda:dueDate="${convert.toDate(invoice.date)}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="javascript">var iCode = task.execution.getVariable("invoice").code;
+task.name = task.name + " " + iCode;
+task.description = "Please approve the invoice " + iCode + ".";</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1t3gatm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1rt21uf</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="save-invoice-task" name="Save invoice" camunda:delegateExpression="#{saveInvoice}">
-      <bpmn:incoming>SequenceFlow_0z9vrca</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_075qofc</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:startEvent id="start">
-      <bpmn:outgoing>SequenceFlow_0z9vrca</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_075qofc" sourceRef="save-invoice-task" targetRef="approve-invoice-task" />
-    <bpmn:sequenceFlow id="SequenceFlow_1rt21uf" sourceRef="approve-invoice-task" targetRef="ExclusiveGateway_0pfgqb6" />
-    <bpmn:sequenceFlow id="SequenceFlow_0z9vrca" sourceRef="start" targetRef="save-invoice-task" />
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0pfgqb6" name="OK?" default="SequenceFlow_06c4bin">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0pfgqb6" name="approved?" default="SequenceFlow_06c4bin">
       <bpmn:incoming>SequenceFlow_1rt21uf</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_06c4bin</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0bxazbh</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_13ikqv0</bpmn:outgoing>
     </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1g9b7tk" sourceRef="reject-invoice-task" targetRef="end-rejected" />
+    <bpmn:sequenceFlow id="SequenceFlow_06c4bin" name="no" sourceRef="ExclusiveGateway_0pfgqb6" targetRef="reject-invoice-task" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rt21uf" sourceRef="approve-invoice-task" targetRef="ExclusiveGateway_0pfgqb6" />
+    <bpmn:sequenceFlow id="SequenceFlow_1t3gatm" sourceRef="start" targetRef="approve-invoice-task" />
+    <bpmn:sequenceFlow id="SequenceFlow_13ikqv0" name="yes" sourceRef="ExclusiveGateway_0pfgqb6" targetRef="save-invoice-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${invoiceApproved == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1x2cfgo" sourceRef="save-invoice-task" targetRef="end-released" />
     <bpmn:serviceTask id="reject-invoice-task" name="Reject invoice" camunda:delegateExpression="#{rejectInvoice}">
       <bpmn:incoming>SequenceFlow_06c4bin</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1g9b7tk</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="release-invoice-task" name="Release invoice" camunda:delegateExpression="#{releaseInvoice}">
-      <bpmn:incoming>SequenceFlow_0bxazbh</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_19ho3so</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:endEvent id="end-rejected" name="rejected">
+    <bpmn:endEvent id="end-rejected" name="204&#10;rejected">
       <bpmn:incoming>SequenceFlow_1g9b7tk</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:endEvent id="end-released" name="released">
-      <bpmn:incoming>SequenceFlow_19ho3so</bpmn:incoming>
+    <bpmn:serviceTask id="save-invoice-task" name="Save invoice" camunda:delegateExpression="#{saveInvoice}">
+      <bpmn:incoming>SequenceFlow_13ikqv0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1x2cfgo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="end-released" name="201&#10;saved">
+      <bpmn:incoming>SequenceFlow_1x2cfgo</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_06c4bin" sourceRef="ExclusiveGateway_0pfgqb6" targetRef="reject-invoice-task" />
-    <bpmn:sequenceFlow id="SequenceFlow_1g9b7tk" sourceRef="reject-invoice-task" targetRef="end-rejected" />
-    <bpmn:sequenceFlow id="SequenceFlow_19ho3so" sourceRef="release-invoice-task" targetRef="end-released" />
-    <bpmn:sequenceFlow id="SequenceFlow_0bxazbh" sourceRef="ExclusiveGateway_0pfgqb6" targetRef="release-invoice-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approved == true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="billing-collaboration">
       <bpmndi:BPMNShape id="Participant_1jwaxs7_di" bpmnElement="billing-participant">
-        <dc:Bounds x="8" y="8" width="553" height="362" />
+        <dc:Bounds x="11" y="14" width="606" height="235" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
-        <dc:Bounds x="69" y="50" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0z9vrca_di" bpmnElement="SequenceFlow_0z9vrca">
-        <di:waypoint x="105" y="68" />
-        <di:waypoint x="144" y="68" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1rt21uf_di" bpmnElement="SequenceFlow_1rt21uf">
-        <di:waypoint x="244" y="200" />
-        <di:waypoint x="271" y="200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_1jp9jxr_di" bpmnElement="save-invoice-task">
-        <dc:Bounds x="144" y="28" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0loaetb_di" bpmnElement="approve-invoice-task">
-        <dc:Bounds x="144" y="160" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0pfgqb6_di" bpmnElement="ExclusiveGateway_0pfgqb6" isMarkerVisible="true">
-        <dc:Bounds x="271" y="175" width="50" height="50" />
+        <dc:Bounds x="82" y="56" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="311" y="219" width="22" height="14" />
+          <dc:Bounds x="79" y="99" width="43" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1qp37c2_di" bpmnElement="submission-lane">
-        <dc:Bounds x="38" y="8" width="523" height="128" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1rt21uf_di" bpmnElement="SequenceFlow_1rt21uf">
+        <di:waypoint x="259" y="74" />
+        <di:waypoint x="311" y="74" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1jp9jxr_di" bpmnElement="save-invoice-task">
+        <dc:Bounds x="408" y="34" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0loaetb_di" bpmnElement="approve-invoice-task">
+        <dc:Bounds x="159" y="34" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0pfgqb6_di" bpmnElement="ExclusiveGateway_0pfgqb6" isMarkerVisible="true">
+        <dc:Bounds x="311" y="49" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="310" y="31" width="52" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0qpbuwc_di" bpmnElement="approvement-lane">
-        <dc:Bounds x="38" y="136" width="523" height="234" />
+        <dc:Bounds x="41" y="14" width="576" height="235" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_075qofc_di" bpmnElement="SequenceFlow_075qofc">
-        <di:waypoint x="194" y="108" />
-        <di:waypoint x="194" y="160" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_0jp1au5_di" bpmnElement="end-rejected">
-        <dc:Bounds x="501" y="182" width="36" height="36" />
+        <dc:Bounds x="559" y="157" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="499" y="227" width="40" height="14" />
+          <dc:Bounds x="557" y="202" width="40" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0iskqx6_di" bpmnElement="end-released">
-        <dc:Bounds x="501" y="292" width="36" height="36" />
+        <dc:Bounds x="559" y="56" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="498" y="335" width="43" height="14" />
+          <dc:Bounds x="563" y="99" width="30" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_10a6k6w_di" bpmnElement="release-invoice-task">
-        <dc:Bounds x="358" y="270" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1n342cs_di" bpmnElement="reject-invoice-task">
-        <dc:Bounds x="358" y="160" width="100" height="80" />
+        <dc:Bounds x="408" y="135" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_06c4bin_di" bpmnElement="SequenceFlow_06c4bin">
-        <di:waypoint x="321" y="200" />
-        <di:waypoint x="358" y="200" />
+        <di:waypoint x="336" y="99" />
+        <di:waypoint x="336" y="175" />
+        <di:waypoint x="408" y="175" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="340" y="112" width="13" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1g9b7tk_di" bpmnElement="SequenceFlow_1g9b7tk">
-        <di:waypoint x="458" y="200" />
-        <di:waypoint x="501" y="200" />
+        <di:waypoint x="508" y="175" />
+        <di:waypoint x="559" y="175" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_19ho3so_di" bpmnElement="SequenceFlow_19ho3so">
-        <di:waypoint x="458" y="310" />
-        <di:waypoint x="501" y="310" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1t3gatm_di" bpmnElement="SequenceFlow_1t3gatm">
+        <di:waypoint x="118" y="74" />
+        <di:waypoint x="159" y="74" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0bxazbh_di" bpmnElement="SequenceFlow_0bxazbh">
-        <di:waypoint x="296" y="225" />
-        <di:waypoint x="296" y="310" />
-        <di:waypoint x="358" y="310" />
+      <bpmndi:BPMNEdge id="SequenceFlow_13ikqv0_di" bpmnElement="SequenceFlow_13ikqv0">
+        <di:waypoint x="361" y="74" />
+        <di:waypoint x="408" y="74" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="362" y="77" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1x2cfgo_di" bpmnElement="SequenceFlow_1x2cfgo">
+        <di:waypoint x="508" y="74" />
+        <di:waypoint x="559" y="74" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
