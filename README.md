@@ -59,6 +59,7 @@ boot it up
 - IntelliJ IDEA to code and for SQL https://www.jetbrains.com/idea/ 
 - Swagger Editor for Open API definitions https://editor.swagger.io/ 
 - Camunda Modeler for BPMN definitions https://camunda.com/products/modeler/
+- Apache JMeter for integration testing and benchmarking https://jmeter.apache.org/ 
 
 ### JPA entities
 
