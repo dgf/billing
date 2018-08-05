@@ -79,6 +79,7 @@ generate classes
 
 - JAX-RS 2.1 + JPA 2.1 https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
 - OpenAPI 2.0 https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
+- GraphQL June 2018 Edition http://facebook.github.io/graphql/June2018/#sec-Type-System
 - PostgreSQL 9.4
   - https://www.postgresql.org/docs/9.4/static/datatype.html
   - https://www.tutorialspoint.com/postgresql/postgresql_data_types.htm

@@ -6,21 +6,21 @@ info:
   license:
     name: MIT License
 schemes:
-  - http
-  - https
+- http
+- https
 host: 'localhost:8080'
 basePath: /api
 produces:
-  - application/json
+- application/json
 paths:
   /invoices:
     get:
       summary: Paged invoice list.
       operationId: getInvoices
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/Size'
-        - $ref: '#/parameters/YearQuery'
+      - $ref: '#/parameters/PageQuery'
+      - $ref: '#/parameters/SizeQuery'
+      - $ref: '#/parameters/YearQuery'
       responses:
         '200':
           description: OK
@@ -34,13 +34,13 @@ paths:
       summary: Add a new invoice.
       operationId: addInvoice
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/Invoice'
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Invoice'
       responses:
         '200':
           description: OK
@@ -83,7 +83,7 @@ paths:
             $ref: '#/definitions/Error'
   '/invoices/{uuid}':
     parameters:
-      - $ref: '#/parameters/UUID'
+    - $ref: '#/parameters/UUID'
     get:
       summary: Get an invoice by UUID.
       operationId: getInvoiceByUUID
@@ -102,7 +102,7 @@ paths:
             $ref: '#/definitions/Error'
   '/reports/invoices/{year}':
     parameters:
-      - $ref: '#/parameters/YearPath'
+    - $ref: '#/parameters/YearPath'
     get:
       summary: Get invoices report.
       operationId: getInvoicesPerMonth
@@ -120,8 +120,8 @@ paths:
       summary: Paged payment list.
       operationId: getPayments
       parameters:
-        - $ref: '#/parameters/Page'
-        - $ref: '#/parameters/Size'
+      - $ref: '#/parameters/PageQuery'
+      - $ref: '#/parameters/SizeQuery'
       responses:
         '200':
           description: OK
@@ -153,7 +153,7 @@ parameters:
     type: string
     format: uuid4
     pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[4][0-9a-fA-F]{3}\-[89abAB][0-9a-fA-F]{3}\-[0-9a-fA-F]{12}$'
-  Page:
+  PageQuery:
     description: The page to be returned.
     in: query
     name: page
@@ -162,7 +162,7 @@ parameters:
     format: int32
     default: 0
     minimum: 0
-  Size:
+  SizeQuery:
     description: Number of records to be returned.
     required: true
     in: query
@@ -182,7 +182,7 @@ parameters:
     maximum: 32767
   YearQuery:
     description: Year to filter a resource.
-    required: true
+    required: false
     in: query
     name: year
     type: integer
@@ -194,9 +194,9 @@ definitions:
     description: Generic API error.
     type: object
     required:
-      - code
-      - status
-      - message
+    - code
+    - status
+    - message
     properties:
       code:
         description: HTTP status code.
@@ -213,19 +213,18 @@ definitions:
   Validation:
     description: Input validation error with detailed explainations.
     allOf:
-      - $ref: '#/definitions/Error'
-      - type: object
-        properties:
-          messages:
-            description: Validation hints mapped by input hierarchy.
-            type: object
-            additionalProperties:
-              type: string
+    - $ref: '#/definitions/Error'
+    - type: object
+      properties:
+        messages:
+          description: Validation hints mapped by input hierarchy.
+          type: object
+          additionalProperties:
+            type: string
   InvoiceReference:
     description: Invoice reference.
     type: object
     required:
-    - uuid
     - code
     - date
     properties:
@@ -250,15 +249,14 @@ definitions:
       uuid:
         type: string
         format: uuid4
-        readOnly: true
       approved:
         type: boolean
   InvoicePosition:
     description: Invoice position.
     type: object
     required:
-      - description
-      - cents
+    - description
+    - cents
     properties:
       created_at:
         type: string
@@ -273,8 +271,8 @@ definitions:
     description: Invoice.
     type: object
     required:
-      - code
-      - date
+    - code
+    - date
     properties:
       uuid:
         type: string
@@ -308,10 +306,10 @@ definitions:
     items:
       type: object
       required:
-        - year
-        - month
-        - count
-        - cents
+      - year
+      - month
+      - count
+      - cents
       properties:
         year:
           type: integer
@@ -334,9 +332,9 @@ definitions:
     description: Payment.
     type: object
     required:
-      - code
-      - date
-      - cents
+    - code
+    - date
+    - cents
     properties:
       uuid:
         type: string
@@ -372,7 +370,6 @@ definitions:
       uuid:
         type: string
         format: uuid4
-        readOnly: true
       dueDate:
         type: string
         format: date
@@ -382,15 +379,14 @@ definitions:
     description: Process task.
     type: object
     required:
-      - uuid
-      - name
-      - key
-      - priority
+    - uuid
+    - name
+    - key
+    - priority
     properties:
       uuid:
         type: string
         format: uuid4
-        readOnly: true
       name:
         type: string
       key:

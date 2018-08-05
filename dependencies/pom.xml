@@ -38,12 +38,24 @@
                 <artifactId>jackson-annotations</artifactId>
                 <version>2.9.6</version>
             </dependency>
-            <!-- Java JSR 310 support -->
+
+            <!-- GraphQL -->
             <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>2.9.6</version>
+                <groupId>com.graphql-java</groupId>
+                <artifactId>graphql-java-tools</artifactId>
+                <version>5.2.3</version>
             </dependency>
+            <dependency>
+                <groupId>com.graphql-java</groupId>
+                <artifactId>graphql-spring-boot-starter</artifactId>
+                <version>5.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.graphql-java</groupId>
+                <artifactId>graphiql-spring-boot-starter</artifactId>
+                <version>5.0.2</version>
+            </dependency>
+
             <!-- camunda process engine -->
             <dependency>
                 <groupId>org.camunda.bpm.springboot</groupId>

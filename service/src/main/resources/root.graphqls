@@ -1,0 +1,21 @@
+type InvoicePosition {
+    description: String
+    cents: String
+}
+
+type Invoice {
+    uuid: String
+    code: String
+    date: String
+    comment: String
+    positions: [InvoicePosition]
+}
+
+type Query {
+    invoices(year: Int, page: Int = 0, size: Int = 5): [Invoice]!
+    invoice(uuid: String): Invoice!
+}
+
+schema {
+    query: Query
+}

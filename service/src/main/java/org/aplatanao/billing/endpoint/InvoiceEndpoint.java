@@ -81,6 +81,6 @@ public class InvoiceEndpoint implements InvoicesApi {
         if (year == null) {
             return converter.toInvoices(invoices.findAllByOrderByDateAsc(pr));
         }
-        return converter.toInvoices(invoices.findByYear(year.shortValue(), pr));
+        return converter.toInvoices(invoices.findAllByYear(year.shortValue(), pr));
     }
 }

@@ -13,5 +13,5 @@ public interface InvoiceRepository extends PagingAndSortingRepository<InvoiceTab
     Page<InvoiceTable> findAllByOrderByDateAsc(Pageable pageable);
 
     @Query(value = "SELECT * FROM t_invoice WHERE EXTRACT(YEAR FROM date) = :year", nativeQuery = true)
-    Page<InvoiceTable> findByYear(@Param("year") short year, Pageable pageable);
+    Page<InvoiceTable> findAllByYear(@Param("year") short year, Pageable pageable);
 }

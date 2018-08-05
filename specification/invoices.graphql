@@ -1,0 +1,20 @@
+fragment invoiceReference on Invoice {
+  uuid
+  code
+  date
+}
+
+fragment invoiceFields on Invoice {
+  ...invoiceReference
+  comment
+  positions @include(if: $withPositions) {
+    description
+    cents
+  }
+}
+
+query View($year: Int, $page: Int = 0, $size: Int = 5, $withPositions: Boolean!) {
+  invoices(year: $year, page: $page, size: $size) {
+    ...invoiceFields
+  }
+}
