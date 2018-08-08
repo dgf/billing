@@ -4,76 +4,79 @@ More a development template than a usable billing application.
 
 Demonstration of a model driven and process based development on an actual Java stack.
 
-Operated with the following basics:
-
-- Spring Boot https://spring.io/projects/spring-boot
-- Camunda https://camunda.com/
-- PostgreSQL https://www.postgresql.org/
-
-And the following helpers:
-
-- Flyway https://flywaydb.org/
-- Hibernate Tools https://hibernate.org/tools/
-- Swagger Codegen https://swagger.io/tools/swagger-codegen/
-
 ## Requirements
 
-run a local PostgreSQL server
+### Database
 
-    docker run --rm --name billing-postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=billing postgres:9
+Adapt the `connection.properties` configuration for an existing [PostgreSQL] database.
 
-adapt the `connection.properties` configuration
+Or use a local [dockerized PostgreSQL]
 
-## Database migrations
+    # docker run --rm --name billing-postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=billing postgres:9
 
-call Flyway
+### Migrations
 
-    ../migrations$ mvn clean initialize flyway:info
+All database changes are managed with [Flyway] migrations.
 
-see https://flywaydb.org/documentation/migrations#sql-based-migrations
-and add a new one to the structure
+Retrieve the actual migration meta data from the configured database with the [Flyway Maven Plugin]
 
-    $ ls -al migrations/src/main/resources/db/migration/
+    $ cd migrations && mvn clean initialize flyway:info
+
+Migrate to the latest one:
+
+    $ cd migrations && mvn clean initialize flyway:migrate
     ...
-    -rw-r--r-- 1 dgf 1049089 376 Jul  9 08:56 V2__Create_invoice_table.sql
+    [INFO] Migrating schema "billing" to version 2 - Create invoice table
     ...
-
-migrate to the latest one
-
-    ../migrations$ mvn clean initialize flyway:migrate
+    [INFO] BUILD SUCCESS
+    ...
 
 ## Run it
 
-build the whole project
+Build the whole project with all [Maven] modules:
 
-    mvn clean install
+    $ mvn clean install
 
-boot it up
+Start the service with the [Spring Boot Maven Plugin]:
 
-    ../service$ mvn clean spring-boot:run
+    $ cd service && mvn clean spring-boot:run
 
 ## Development
 
 ### Useful development tools
 
-- IntelliJ IDEA to code and for SQL https://www.jetbrains.com/idea/ 
-- Swagger Editor for Open API definitions https://editor.swagger.io/ 
-- Camunda Modeler for BPMN definitions https://camunda.com/products/modeler/
-- Apache JMeter for integration testing and benchmarking https://jmeter.apache.org/ 
+- IntelliJ [IDEA] to code and for SQL
+- [Swagger Editor] for Open API definitions
+- [Camunda Modeler] for BPMN definitions
+- [Apache JMeter] for integration testing and benchmarking
 
-### JPA entities
+### Migrations
 
-generate classes
+Change your database and record the necessary statements in [Flyway SQL Migrations]
 
-    ../persistence$ mvn clean verify
+    $ ls -al migrations/src/main/resources/db/migration/
+    ...
+    -rw-r--r-- 1 dgf dgf   77 ago  4 12:59 V1__Create_extensions_and_schema.sql
+    -rw-r--r-- 1 dgf dgf  549 ago  4 12:59 V2__Create_invoice_table.sql
+    ...
 
-### JAX-RS API
+Adapt your changes with the [Flyway Maven Plugin]
 
-adapt the OpenAPI 2.0 definition `api/src/main/resources/api.yaml` file
+    $ cd migrations && mvn clean initialize flyway:migrate
 
-generate classes
+### Persistence
 
-    ../api$ mvn clean verify
+Generate JPA entity classes for the actual connected database with the [Hibernate Tools Maven Plugin]
+
+    $ cd persistence && mvn clean verify
+
+### REST API
+
+Adapt the OpenAPI 2.0 definition `specification/api.yaml`
+
+Generate the JAX-RS interfaces and POJOs with the [Swagger Codegen Maven Plugin]
+
+    $ cd specification && mvn clean verify
 
 ### Data type mappings
 
@@ -94,8 +97,45 @@ generate classes
 | date        | string > date      | j.t.LocalDate      | j.t.LocalDate      | **date**       | 4713 BC to 5874897 AD                                 |
 | date time   | string > date-time | j.t.OffsetDateTime | j.t.OffsetDateTime | **timestamp**  | 4713 BC	294276 AD 1 microsecond / 14 digits           |
 
+### Typical Failures
+
+#### build it with an invalid database connection
+
+Event:
+A call of Maven results in the following error:
+
+    $ mvn clean install
+    ...
+    [ERROR] Failed to execute goal org.hibernate:hibernate-tools-maven-plugin:5.3.4.Final:hbm2java
+    (Entity generation) on project persistence: Execution Entity generation of goal
+    org.hibernate:hibernate-tools-maven-plugin:5.3.4.Final:hbm2java failed:
+    Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment]:
+    Error calling Driver#connect: Connection to localhost:5432 refused.
+    Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections.
+    Connection refused (Connection refused) -> [Help 1]
+
+Solution:
+check the connection parameters and the access to your database from the machine the service should run on.
+
 ### TBD
 
-- [ ] re-add custom revengStrategy parameter for the Hibernate Codegen configuration, see https://github.com/hibernate/hibernate-tools/pull/1017
+- [x] re-add custom revengStrategy parameter for the Hibernate Codegen configuration, see https://github.com/hibernate/hibernate-tools/pull/1017
 - [ ] support Java long value literal restrictions for the @Min and @Max annotations in Swagger Codegen
 - [ ] support referenced type definitions in Swagger Codegen to reuse common restrictions like year and code
+
+[Apache JMeter]: https://jmeter.apache.org/
+[Camunda]: https://camunda.com/
+[Camunda Modeler]: https://camunda.com/products/modeler/
+[dockerized PostgreSQL]: https://hub.docker.com/_/postgres/
+[Flyway]: https://flywaydb.org/
+[Flyway Maven Plugin]: https://flywaydb.org/documentation/maven/
+[Flyway SQL Migrations]: https://flywaydb.org/documentation/migrations#sql-based-migrations
+[Hibernate Tools]: https://hibernate.org/tools/
+[Hibernate Tools Maven Plugin]: https://github.com/hibernate/hibernate-tools/tree/master/maven
+[IDEA]: https://www.jetbrains.com/idea/
+[Maven]: https://maven.apache.org/
+[PostgreSQL]: https://www.postgresql.org
+[Spring Boot]: https://spring.io/projects/spring-boot
+[Spring Boot Maven Plugin]: https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html
+[Swagger Codegen Maven Plugin]: https://github.com/swagger-api/swagger-codegen/tree/master/modules/swagger-codegen-maven-plugin
+[Swagger Editor]: https://editor.swagger.io/
