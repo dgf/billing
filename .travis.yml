@@ -4,8 +4,10 @@ addons:
     packages: oracle-java8-installer
 language: java
 services: postgresql
-install: true
 before_script:
-  - psql -c 'create database billing;' -U postgres
-  - cd migrations && mvn clean initialize flyway:migrate -Dpostgres.url='jdbc:postgresql://localhost:5432/billing' -Dpostgres.username='postgres' -Dpostgres.password=''
-script: mvn clean install -Dpostgres.url='jdbc:postgresql://localhost:5432/billing' -Dpostgres.username='postgres' -Dpostgres.password=''
+  - psql -c 'CREATE DATABASE billing' -U postgres
+  - cd migrations
+  - mvn clean initialize flyway:migrate -Dpostgres.password=''
+  - cd ..
+install: true
+script: mvn clean install -Dpostgres.password=''
