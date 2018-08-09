@@ -8,8 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 @Configuration
 public class GraphQL {
@@ -17,10 +19,16 @@ public class GraphQL {
     @Value("classpath:root.graphqls")
     private Resource schemaFile;
 
+    private String getSchema() throws IOException {
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(schemaFile.getInputStream()))) {
+            return buffer.lines().collect(Collectors.joining("\n"));
+        }
+    }
+
     @Bean
     GraphQLSchema schema(Query query) throws IOException {
         return SchemaParser.newParser()
-                .schemaString(new String(Files.readAllBytes(schemaFile.getFile().toPath())))
+                .schemaString(getSchema())
                 .resolvers(query).build().makeExecutableSchema();
     }
 }

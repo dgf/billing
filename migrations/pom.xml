@@ -4,10 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Aplatanao Billing :: Migrations</name>
-    <groupId>org.aplatanao.billing</groupId>
     <artifactId>migrations</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.aplatanao.billing</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
 
     <build>
         <plugins>
@@ -15,7 +19,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0.0</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
@@ -31,24 +34,29 @@
                 </executions>
             </plugin>
 
-            <!-- database migrations -->
+            <!-- database migration calls -->
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>5.1.3</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.2.2</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
                     <url>${postgres.url}</url>
                     <user>${postgres.username}</user>
                     <password>${postgres.password}</password>
                     <schemas>billing</schemas>
                 </configuration>
+            </plugin>
+
+            <!-- bundle migration files -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
