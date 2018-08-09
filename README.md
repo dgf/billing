@@ -1,5 +1,7 @@
 # Aplatanao Billing
 
+[![Build Status](https://travis-ci.org/dgf/billing.svg?branch=master)](https://travis-ci.org/dgf/billing)
+
 More a development template than a usable billing application.
 
 Demonstration of a model driven and process based development on an actual Java stack.
