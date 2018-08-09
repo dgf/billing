@@ -4,5 +4,6 @@ addons:
     packages: oracle-java8-installer
 language: java
 services: postgresql
+install: true
 before_script: psql -c 'create database travis_ci_test;' -U postgres
 script: mvn clean install -Dpostgres.url='jdbc:postgresql://localhost:5432/billing' -Dpostgres.username='postgres' -Dpostgres.password=''
