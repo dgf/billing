@@ -1,13 +1,14 @@
+language: java
+services: postgresql
 addons:
   postgresql: "9.6"
   apt:
-    packages: oracle-java8-installer
-language: java
-services: postgresql
+    packages:
+    - oracle-java8-installer
+
 before_script:
-  - psql -c 'CREATE DATABASE billing' -U postgres
-  - cd migrations
-  - mvn clean initialize flyway:migrate -Dpostgres.password=''
-  - cd ..
+- psql -c 'CREATE DATABASE billing' -U postgres
+- mvn -P migration initialize flyway:migrate -Dpostgres.password=''
+
 install: true
 script: mvn clean install -Dpostgres.password=''

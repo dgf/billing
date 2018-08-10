@@ -22,28 +22,21 @@ All database changes are managed with [Flyway] migrations.
 
 Retrieve the actual migration meta data from the configured database with the [Flyway Maven Plugin]
 
-    $ cd migrations && mvn clean initialize flyway:info
+    $ mvn -P migration initialize flyway:info
 
-Migrate to the latest one:
+Migrate the database to the latest version.
 
-    $ cd migrations && mvn clean initialize flyway:migrate
-    ...
-    [INFO] Migrating schema "billing" to version 2 - Create invoice table
-    ...
-    [INFO] BUILD SUCCESS
-    ...
+    $ mvn -P migration initialize flyway:migrate
 
-## Run it
+## Development
 
-Build the whole project with all [Maven] modules:
+Build the whole project with all [Maven] modules.
 
     $ mvn clean install
 
-Start the service with the [Spring Boot Maven Plugin]:
+Start the service with the [Spring Boot Maven Plugin]
 
-    $ cd service && mvn clean spring-boot:run
-
-## Development
+    $ cd service && mvn spring-boot:run
 
 ### Useful development tools
 
